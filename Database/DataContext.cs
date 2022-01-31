@@ -13,6 +13,12 @@ public class DataContext : IdentityDbContext<AppUser>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<RefreshUserToken>()
+            .ToTable("RefreshToken")
+            .HasOne(u => u.User)
+            .WithMany(t => t.RefreshTokens)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 
     public override int SaveChanges()

@@ -41,13 +41,13 @@ public class TokenService
         return tokenHandler.WriteToken(token);
     }
 
-    public RefreshToken GenerateRefreshToken()
+    public RefreshUserToken GenerateRefreshUserToken()
     {
         var randomNumber = new byte[32];
         using var rng = RandomNumberGenerator.Create();
         rng.GetBytes(randomNumber);
 
-        return new RefreshToken
+        return new RefreshUserToken
         {
             Token = Convert.ToBase64String(randomNumber)
         };
