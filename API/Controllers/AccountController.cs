@@ -237,7 +237,7 @@ public class AccountController : ControllerBase
         Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
     }
 
-    private UserDto? CreateUserObject(AppUser user, string origin)
+    private UserDto CreateUserObject(AppUser user, string origin)
     {
         var pathImage = user?.AvatarName != null ? Path.Combine(origin, "images", user.AvatarName) : null;
 

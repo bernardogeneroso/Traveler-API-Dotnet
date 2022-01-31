@@ -1,9 +1,8 @@
 using API.Extensions;
 using API.Middleware;
 using Database;
-using Microsoft.AspNetCore.Authorization;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Models;
 
@@ -11,7 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddFluentValidation(cfg =>
+{
+    cfg.RegisterValidatorsFromAssemblyContaining<Services.Cities.Create>(lifetime: ServiceLifetime.Singleton);
+    cfg.ImplicitlyValidateChildProperties = true;
+});
 
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityService(builder.Configuration);

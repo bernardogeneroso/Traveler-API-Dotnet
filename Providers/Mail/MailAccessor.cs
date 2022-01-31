@@ -16,7 +16,7 @@ public class MailAccessor : IMailAccessor
         _config = config;
     }
 
-    public async Task SendMail(string to, string subject, string displayName, MailButton mailButton, string? body = null)
+    public async Task SendMail(string to, string subject, string displayName, MailButton mailButton, string body = null)
     {
         body = body ?? "Test email of RentX";
 

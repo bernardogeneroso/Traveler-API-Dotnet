@@ -10,15 +10,27 @@ public class DataContext : IdentityDbContext<AppUser>
     {
     }
 
+    public DbSet<City> Cities => Set<City>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<RefreshUserToken>()
-            .ToTable("RefreshToken")
+        builder.Entity<RefreshToken>()
+            .ToTable("RefreshesTokens")
             .HasOne(u => u.User)
             .WithMany(t => t.RefreshTokens)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<City>()
+            .ToTable("Cities");
+        builder.Entity<CityDetail>()
+            .ToTable("CitiesDetails")
+            .HasKey(x => x.CityId);
+        builder.Entity<CityDetail>()
+            .HasOne(c => c.City)
+            .WithOne(cd => cd.Detail)
+            .HasForeignKey<CityDetail>(cd => cd.CityId);
     }
 
     public override int SaveChanges()

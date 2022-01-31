@@ -1,4 +1,5 @@
 using Database;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Providers.API;
@@ -74,6 +75,8 @@ public static class ApplicationServiceExtensions
                 config["Mail:Password"]
             );
 
+        services.AddMediatR(typeof(Services.Cities.List.Handler).Assembly);
+        services.AddAutoMapper(typeof(Services.Core.MappingProfiles).Assembly);
         services.AddScoped<IUserAccessor, UserAccessor>();
         services.AddScoped<IImageAccessor, ImageAccessor>();
         services.AddScoped<IOriginAccessor, OriginAccessor>();

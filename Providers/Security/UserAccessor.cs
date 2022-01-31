@@ -12,13 +12,13 @@ public class UserAccessor : IUserAccessor
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public string? GetEmail()
+    public string GetEmail()
     {
         return _httpContextAccessor?.HttpContext?.User.FindFirstValue(ClaimTypes.Email);
     }
 
-    public string? GetUsername()
+    public string GetUsername()
     {
-        return _httpContextAccessor?.HttpContext?.User.FindFirstValue(ClaimTypes.Name);
+        return _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
     }
 }

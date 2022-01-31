@@ -18,7 +18,7 @@ public class ImageAccessor : IImageAccessor
         _environment = environment;
     }
 
-    public async Task<string?> AddImage(IFormFile File, string fileName)
+    public async Task<string> AddImage(IFormFile File, string fileName)
     {
         try
         {
