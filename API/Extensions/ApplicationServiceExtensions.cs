@@ -1,6 +1,11 @@
 using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Providers.API;
+using Providers.Image;
+using Providers.Mail;
+using Providers.Security;
+using Services.Interfaces;
 
 namespace API.Extensions;
 
@@ -49,16 +54,30 @@ public static class ApplicationServiceExtensions
             options.UseNpgsql(connStr);
         });
         services.AddCors(opt =>
+        {
+            opt.AddPolicy("CorsPolicy", policy =>
             {
-                opt.AddPolicy("CorsPolicy", policy =>
-                {
-                    policy
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials()
-                        .WithOrigins("http://localhost:3000");
-                });
+                policy
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials()
+                    .WithOrigins("http://localhost:3000");
             });
+        });
+        services
+            .AddFluentEmail(config["Mail:Email"])
+            .AddRazorRenderer()
+            .AddSmtpSender(
+                config["Mail:Host"],
+                int.Parse(config["Mail:Port"]),
+                config["Mail:User"],
+                config["Mail:Password"]
+            );
+
+        services.AddScoped<IUserAccessor, UserAccessor>();
+        services.AddScoped<IImageAccessor, ImageAccessor>();
+        services.AddScoped<IOriginAccessor, OriginAccessor>();
+        services.AddScoped<IMailAccessor, MailAccessor>();
 
         return services;
     }

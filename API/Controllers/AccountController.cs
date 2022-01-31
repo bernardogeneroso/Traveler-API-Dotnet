@@ -46,7 +46,7 @@ public class AccountController : ControllerBase
 
         if (!result.Succeeded) return Unauthorized("Invalid email or password");
 
-        await SetRefreshUserToken(user);
+        await SetRefreshToken(user);
 
         var origin = Request.Headers["Origin"];
 
@@ -100,7 +100,7 @@ public class AccountController : ControllerBase
 
         var body = $"Please verify your email by clicking on the button below.";
 
-        await _mailAccesor.SendMail(user.Email, "RentX - Verify your email", user.DisplayName, body, button);
+        await _mailAccesor.SendMail(user.Email, "RentX - Verify your email", user.DisplayName, button, body);
 
         return Ok("User registered");
     }
@@ -147,7 +147,7 @@ public class AccountController : ControllerBase
 
         var body = $"Please verify your email by clicking on the button below.";
 
-        await _mailAccesor.SendMail(user.Email, "RentX - Verify your email", user.DisplayName, body, button);
+        await _mailAccesor.SendMail(user.Email, "RentX - Verify your email", user.DisplayName, button, body);
 
         return Ok("Email verification link resent");
     }
@@ -186,7 +186,7 @@ public class AccountController : ControllerBase
 
         if (user == null) return Unauthorized();
 
-        await SetRefreshUserToken(user);
+        await SetRefreshToken(user);
 
         var origin = Request.Headers["Origin"];
 
@@ -198,7 +198,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("refreshToken")]
-    public async Task<ActionResult<UserDto>> RefreshUserToken()
+    public async Task<ActionResult<UserDto>> RefreshToken()
     {
         var refreshToken = Request.Cookies["refreshToken"];
 
@@ -221,11 +221,11 @@ public class AccountController : ControllerBase
         return userDto;
     }
 
-    private async Task SetRefreshUserToken(AppUser user)
+    private async Task SetRefreshToken(AppUser user)
     {
-        var refreshUserToken = _tokenService.GenerateRefreshUserToken();
+        var refreshToken = _tokenService.GenerateRefreshToken();
 
-        user.RefreshTokens.Add(refreshUserToken);
+        user.RefreshTokens.Add(refreshToken);
         await _userManager.UpdateAsync(user);
 
         var cookieOptions = new CookieOptions
@@ -234,7 +234,7 @@ public class AccountController : ControllerBase
             Expires = DateTime.UtcNow.AddDays(7)
         };
 
-        Response.Cookies.Append("refreshToken", refreshUserToken.Token, cookieOptions);
+        Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
     }
 
     private UserDto? CreateUserObject(AppUser user, string origin)

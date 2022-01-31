@@ -41,7 +41,7 @@ public class TokenService
         return tokenHandler.WriteToken(token);
     }
 
-    public RefreshUserToken GenerateRefreshUserToken()
+    public RefreshUserToken GenerateRefreshToken()
     {
         var randomNumber = new byte[32];
         using var rng = RandomNumberGenerator.Create();
