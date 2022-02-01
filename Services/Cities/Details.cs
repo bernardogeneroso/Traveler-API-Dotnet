@@ -32,6 +32,7 @@ public class Details
         {
             var cityDto = await _context.Cities
                         .Include(x => x.Detail)
+                        .AsNoTracking()
                         .ProjectTo<CityDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
                         .FirstOrDefaultAsync(x => x.Id == request.Id);
 

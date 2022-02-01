@@ -8,7 +8,7 @@ public class CityDtoQuery
     public string Name { get; set; }
     public int Locations { get; set; }
     public string ImageName { get; set; }
-    public int ClickedCount { get; set; }
+    public bool IsActive { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public CityDetailDtoQuery Detail { get; set; }

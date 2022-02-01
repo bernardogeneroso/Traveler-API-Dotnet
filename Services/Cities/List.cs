@@ -2,6 +2,7 @@ using Application.Core;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Database;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Services.Cities.DTOs;
@@ -13,6 +14,16 @@ public class List
 {
     public class Query : IRequest<Result<List<CityDtoQuery>>>
     {
+        public int Filter { get; set; }
+        public string Search { get; set; }
+    }
+
+    public class QueryValidator : AbstractValidator<Query>
+    {
+        public QueryValidator()
+        {
+            RuleFor(x => x.Filter).InclusiveBetween(0, 2).NotEmpty();
+        }
     }
 
     public class Handler : IRequestHandler<Query, Result<List<CityDtoQuery>>>
@@ -30,12 +41,41 @@ public class List
 
         public async Task<Result<List<CityDtoQuery>>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var cities = await _context.Cities
+            var query = _context.Cities
                     .AsNoTracking()
-                    .ProjectTo<CityDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
-                    .ToListAsync();
+                    .AsQueryable();
 
-            return Result<List<CityDtoQuery>>.Success(cities);
+            if (request.Filter == 1)
+            {
+                query = query.OrderByDescending(x => x.ClickedCount);
+            }
+            else if (request.Filter == 2)
+            {
+                query = query.OrderBy(x => x.Name);
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Search))
+            {
+                var cities = await query
+                        .ProjectTo<CityDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
+                        .ToListAsync();
+
+                cities = cities.Select(x =>
+                {
+                    x.IsActive = x.Name.Contains(request.Search, StringComparison.OrdinalIgnoreCase);
+                    return x;
+                })
+                .OrderByDescending(x => x.IsActive)
+                .ToList();
+
+                return Result<List<CityDtoQuery>>.Success(cities);
+            }
+
+            return Result<List<CityDtoQuery>>.Success(
+                await query
+                .ProjectTo<CityDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
+                .ToListAsync()
+            );
         }
     }
 }

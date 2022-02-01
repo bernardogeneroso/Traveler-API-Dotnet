@@ -7,9 +7,9 @@ namespace API.Controllers;
 public class CitiesController : BaseApiController
 {
     [HttpGet]
-    public async Task<IActionResult> GetCities()
+    public async Task<IActionResult> GetCities([FromQuery] int filter = 0, string search = null)
     {
-        return HandleResult(await Mediator.Send(new List.Query()));
+        return HandleResult(await Mediator.Send(new List.Query { Filter = filter, Search = search }));
     }
 
     [HttpGet("{id}")]
