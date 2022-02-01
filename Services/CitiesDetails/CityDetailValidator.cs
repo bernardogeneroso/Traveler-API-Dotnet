@@ -1,9 +1,9 @@
 using FluentValidation;
-using Models;
+using Services.CitiesDetails.DTOs;
 
 namespace Services.CitiesDetails;
 
-public class CityDetailValidator : AbstractValidator<CityDetail>
+public class CityDetailValidator : AbstractValidator<CityDetailDtoRequest>
 {
     public CityDetailValidator()
     {

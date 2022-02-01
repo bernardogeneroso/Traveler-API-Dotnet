@@ -11,6 +11,7 @@ public class DataContext : IdentityDbContext<AppUser>
     }
 
     public DbSet<City> Cities => Set<City>();
+    public DbSet<CityDetail> CitiesDetails => Set<CityDetail>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

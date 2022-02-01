@@ -8,7 +8,7 @@ using Services.Cities.DTOs;
 
 namespace Services.Cities;
 
-public class Create
+public class Edit
 {
     public class Command : IRequest<Result<Unit>>
     {
@@ -36,18 +36,16 @@ public class Create
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
             var city = await _context.Cities
-                    .Where(x => x.Name == request.City.Name)
-                    .FirstOrDefaultAsync();
+                    .Include(x => x.Detail)
+                    .FirstOrDefaultAsync(x => x.Id == request.City.Id);
 
-            if (city != null) return Result<Unit>.Failure("City already exists");
+            if (city == null) return Result<Unit>.Failure("Couldn't find the city");
 
-            var newCity = _mapper.Map(request.City, city);
-
-            _context.Cities.Add(newCity);
+            _mapper.Map(request.City, city);
 
             var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 
-            if (!result) return Result<Unit>.Failure("Failed to create city");
+            if (!result) return Result<Unit>.Failure("Couldn't update the city");
 
             return Result<Unit>.SuccessNoContent(Unit.Value);
         }

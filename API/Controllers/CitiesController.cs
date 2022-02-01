@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Models;
 using Services.Cities;
+using Services.Cities.DTOs;
 
 namespace API.Controllers;
 
@@ -12,9 +12,29 @@ public class CitiesController : BaseApiController
         return HandleResult(await Mediator.Send(new List.Query()));
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetCity(Guid id)
+    {
+        return HandleResult(await Mediator.Send(new Details.Query { Id = id }));
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> EditCity(Guid id, [FromBody] CityDtoRequest City)
+    {
+        City.Id = id;
+
+        return HandleResult(await Mediator.Send(new Edit.Command { City = City }));
+    }
+
     [HttpPost]
-    public async Task<IActionResult> CreateCity([FromBody] City city)
+    public async Task<IActionResult> CreateCity([FromBody] CityDtoRequest city)
     {
         return HandleResult(await Mediator.Send(new Create.Command { City = city }));
+    }
+
+    [HttpPost("{id}/click")]
+    public async Task<IActionResult> ClickCity(Guid id)
+    {
+        return HandleResult(await Mediator.Send(new CityClicked.Command { Id = id }));
     }
 }
