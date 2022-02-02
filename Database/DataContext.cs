@@ -12,6 +12,8 @@ public class DataContext : IdentityDbContext<AppUser>
 
     public DbSet<City> Cities => Set<City>();
     public DbSet<CityDetail> CitiesDetails => Set<CityDetail>();
+    public DbSet<CityPlace> CitiesPlaces => Set<CityPlace>();
+    public DbSet<CategoryCity> CategoriesCities => Set<CategoryCity>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -24,7 +26,12 @@ public class DataContext : IdentityDbContext<AppUser>
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<City>()
-            .ToTable("Cities");
+            .ToTable("Cities")
+            .HasOne(c => c.Detail)
+            .WithOne(d => d.City)
+            .HasForeignKey<CityDetail>(d => d.CityId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.Entity<CityDetail>()
             .ToTable("CitiesDetails")
             .HasKey(x => x.CityId);
@@ -32,6 +39,26 @@ public class DataContext : IdentityDbContext<AppUser>
             .HasOne(c => c.City)
             .WithOne(cd => cd.Detail)
             .HasForeignKey<CityDetail>(cd => cd.CityId);
+
+        builder.Entity<CityPlace>(x =>
+        {
+            x.ToTable("CitiesPlaces")
+                .HasKey(x => x.Id);
+
+            x.HasOne(c => c.City)
+                .WithMany(cp => cp.CitiesPlaces)
+                .HasForeignKey(c => c.CityId)
+                .OnDelete(DeleteBehavior.Cascade);
+            x.HasOne(c => c.Category)
+                .WithMany(cp => cp.CitiesPlaces)
+                .HasForeignKey(c => c.CategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<CategoryCity>()
+            .ToTable("CategoriesCities")
+            .HasKey(x => x.Id);
+        builder.Entity<CategoryCity>();
     }
 
     public override int SaveChanges()

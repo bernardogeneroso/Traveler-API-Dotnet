@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using API.Extensions;
 using API.Middleware;
 using Database;
@@ -5,6 +6,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using Services.Cities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,8 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers().AddFluentValidation(cfg =>
 {
-    cfg.RegisterValidatorsFromAssemblyContaining<Services.Cities.Create>(lifetime: ServiceLifetime.Singleton);
-    cfg.ImplicitlyValidateChildProperties = true;
+    cfg.RegisterValidatorsFromAssemblyContaining<List>();
 });
 
 builder.Services.AddApplicationServices(builder.Configuration);

@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Database.Migrations
 {
-    public partial class UpdateRemoveNonNullable : Migration
+    public partial class InicitalCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -49,6 +49,22 @@ namespace Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CategoriesCities",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Places = table.Column<int>(type: "integer", nullable: false),
+                    ImageName = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoriesCities", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -214,6 +230,33 @@ namespace Database.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "CitiesPlaces",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CityId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CategoryId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    ImageName = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CitiesPlaces", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CitiesPlaces_CategoriesCities_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "CategoriesCities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CitiesPlaces_Cities_CityId",
+                        column: x => x.CityId,
+                        principalTable: "Cities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -252,6 +295,16 @@ namespace Database.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_CitiesPlaces_CategoryId",
+                table: "CitiesPlaces",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CitiesPlaces_CityId",
+                table: "CitiesPlaces",
+                column: "CityId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RefreshesTokens_UserId",
                 table: "RefreshesTokens",
                 column: "UserId");
@@ -278,10 +331,16 @@ namespace Database.Migrations
                 name: "CitiesDetails");
 
             migrationBuilder.DropTable(
+                name: "CitiesPlaces");
+
+            migrationBuilder.DropTable(
                 name: "RefreshesTokens");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "CategoriesCities");
 
             migrationBuilder.DropTable(
                 name: "Cities");

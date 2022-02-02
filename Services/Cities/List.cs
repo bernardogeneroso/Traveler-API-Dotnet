@@ -41,6 +41,12 @@ public class List
 
         public async Task<Result<List<CityDtoQuery>>> Handle(Query request, CancellationToken cancellationToken)
         {
+            // Manual validation using FluentValidation
+            var validator = new QueryValidator();
+            var resultValidation = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!resultValidation.IsValid) return Result<List<CityDtoQuery>>.Failure("Failed to get the cities", resultValidation);
+
             var query = _context.Cities
                     .AsNoTracking()
                     .AsQueryable();
@@ -67,6 +73,8 @@ public class List
                 })
                 .OrderByDescending(x => x.IsActive)
                 .ToList();
+
+                if (cities.All(x => !x.IsActive)) cities.Clear();
 
                 return Result<List<CityDtoQuery>>.Success(cities);
             }

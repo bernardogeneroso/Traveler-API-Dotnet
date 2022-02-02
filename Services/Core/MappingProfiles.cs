@@ -1,8 +1,10 @@
 using AutoMapper;
 using Models;
 using Services.Cities.DTOs;
+using Services.CitiesCategories.DTOs;
 using Services.CitiesDetails;
 using Services.CitiesDetails.DTOs;
+using Services.CitiesPlaces.DTOs;
 
 namespace Services.Core;
 
@@ -19,8 +21,18 @@ public class MappingProfiles : Profile
                         $"{currentOrigin}/images/{x.ImageName}" :
                         $"{currentOrigin}/images/user.png"));
         CreateMap<CityDtoRequest, City>();
+
         CreateMap<CityDetail, CityDetailDtoQuery>();
         CreateMap<CityDetailDtoRequest, CityDetail>();
+
+        CreateMap<CategoryCity, CategoryCityDtoQuery>()
+                .ForMember(dest => dest.ImageName,
+                    src => src.MapFrom(x =>
+                        x.ImageName != null ?
+                        $"{currentOrigin}/images/{x.ImageName}" : null));
+        CreateMap<CategoryCityDtoRequest, CategoryCity>();
+
+        CreateMap<CityPlaceDtoRequest, CityPlace>();
     }
 }
 

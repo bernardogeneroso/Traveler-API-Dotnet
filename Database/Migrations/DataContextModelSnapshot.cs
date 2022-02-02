@@ -224,6 +224,32 @@ namespace Database.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Models.CategoryCity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ImageName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Places")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CategoriesCities", (string)null);
+                });
+
             modelBuilder.Entity("Models.City", b =>
                 {
                     b.Property<Guid>("Id")
@@ -267,6 +293,33 @@ namespace Database.Migrations
                     b.HasKey("CityId");
 
                     b.ToTable("CitiesDetails", (string)null);
+                });
+
+            modelBuilder.Entity("Models.CityPlace", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ImageName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("CityId");
+
+                    b.ToTable("CitiesPlaces", (string)null);
                 });
 
             modelBuilder.Entity("Models.RefreshToken", b =>
@@ -356,6 +409,25 @@ namespace Database.Migrations
                     b.Navigation("City");
                 });
 
+            modelBuilder.Entity("Models.CityPlace", b =>
+                {
+                    b.HasOne("Models.CategoryCity", "Category")
+                        .WithMany("CitiesPlaces")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.City", "City")
+                        .WithMany("CitiesPlaces")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("City");
+                });
+
             modelBuilder.Entity("Models.RefreshToken", b =>
                 {
                     b.HasOne("Models.AppUser", "User")
@@ -371,8 +443,15 @@ namespace Database.Migrations
                     b.Navigation("RefreshTokens");
                 });
 
+            modelBuilder.Entity("Models.CategoryCity", b =>
+                {
+                    b.Navigation("CitiesPlaces");
+                });
+
             modelBuilder.Entity("Models.City", b =>
                 {
+                    b.Navigation("CitiesPlaces");
+
                     b.Navigation("Detail");
                 });
 #pragma warning restore 612, 618
