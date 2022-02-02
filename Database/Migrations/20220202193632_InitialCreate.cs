@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Database.Migrations
 {
-    public partial class InicitalCreate : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -238,7 +238,9 @@ namespace Database.Migrations
                     CityId = table.Column<Guid>(type: "uuid", nullable: false),
                     CategoryId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
-                    ImageName = table.Column<string>(type: "text", nullable: true)
+                    ImageName = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -253,6 +255,27 @@ namespace Database.Migrations
                         name: "FK_CitiesPlaces_Cities_CityId",
                         column: x => x.CityId,
                         principalTable: "Cities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CitiesPlacesSchedules",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    PlaceId = table.Column<Guid>(type: "uuid", nullable: false),
+                    DayWeek = table.Column<int>(type: "integer", nullable: false),
+                    StartTime = table.Column<float>(type: "real", nullable: true),
+                    EndTime = table.Column<float>(type: "real", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CitiesPlacesSchedules", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CitiesPlacesSchedules_CitiesPlaces_PlaceId",
+                        column: x => x.PlaceId,
+                        principalTable: "CitiesPlaces",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -305,6 +328,11 @@ namespace Database.Migrations
                 column: "CityId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CitiesPlacesSchedules_PlaceId",
+                table: "CitiesPlacesSchedules",
+                column: "PlaceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RefreshesTokens_UserId",
                 table: "RefreshesTokens",
                 column: "UserId");
@@ -331,7 +359,7 @@ namespace Database.Migrations
                 name: "CitiesDetails");
 
             migrationBuilder.DropTable(
-                name: "CitiesPlaces");
+                name: "CitiesPlacesSchedules");
 
             migrationBuilder.DropTable(
                 name: "RefreshesTokens");
@@ -340,13 +368,16 @@ namespace Database.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "CitiesPlaces");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
                 name: "CategoriesCities");
 
             migrationBuilder.DropTable(
                 name: "Cities");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
         }
     }
 }

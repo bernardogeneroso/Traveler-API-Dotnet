@@ -14,6 +14,7 @@ public class DataContext : IdentityDbContext<AppUser>
     public DbSet<CityDetail> CitiesDetails => Set<CityDetail>();
     public DbSet<CityPlace> CitiesPlaces => Set<CityPlace>();
     public DbSet<CategoryCity> CategoriesCities => Set<CategoryCity>();
+    public DbSet<CityPlaceSchedule> CitiesPlacesSchedules => Set<CityPlaceSchedule>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -59,6 +60,17 @@ public class DataContext : IdentityDbContext<AppUser>
             .ToTable("CategoriesCities")
             .HasKey(x => x.Id);
         builder.Entity<CategoryCity>();
+
+        builder.Entity<CityPlaceSchedule>(x =>
+        {
+            x.ToTable("CitiesPlacesSchedules")
+                .HasKey(x => x.Id);
+
+            x.HasOne(c => c.Place)
+                .WithMany(cp => cp.Schedules)
+                .HasForeignKey(c => c.PlaceId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
     }
 
     public override int SaveChanges()

@@ -27,7 +27,7 @@ public class Delete
 
             _context.CategoriesCities.Remove(category);
 
-            var result = await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 
             if (!result) return Result<Unit>.Failure("Failed to delete category");
 

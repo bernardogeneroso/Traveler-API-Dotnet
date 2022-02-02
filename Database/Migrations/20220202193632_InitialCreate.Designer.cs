@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Database.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220202145144_InicitalCreate")]
-    partial class InicitalCreate
+    [Migration("20220202193632_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -309,10 +309,16 @@ namespace Database.Migrations
                     b.Property<Guid>("CityId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
                     b.Property<string>("ImageName")
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -322,6 +328,31 @@ namespace Database.Migrations
                     b.HasIndex("CityId");
 
                     b.ToTable("CitiesPlaces", (string)null);
+                });
+
+            modelBuilder.Entity("Models.CityPlaceSchedule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("DayWeek")
+                        .HasColumnType("integer");
+
+                    b.Property<float?>("EndTime")
+                        .HasColumnType("real");
+
+                    b.Property<Guid>("PlaceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<float?>("StartTime")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlaceId");
+
+                    b.ToTable("CitiesPlacesSchedules", (string)null);
                 });
 
             modelBuilder.Entity("Models.RefreshToken", b =>
@@ -430,6 +461,17 @@ namespace Database.Migrations
                     b.Navigation("City");
                 });
 
+            modelBuilder.Entity("Models.CityPlaceSchedule", b =>
+                {
+                    b.HasOne("Models.CityPlace", "Place")
+                        .WithMany("Schedules")
+                        .HasForeignKey("PlaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Place");
+                });
+
             modelBuilder.Entity("Models.RefreshToken", b =>
                 {
                     b.HasOne("Models.AppUser", "User")
@@ -455,6 +497,11 @@ namespace Database.Migrations
                     b.Navigation("CitiesPlaces");
 
                     b.Navigation("Detail");
+                });
+
+            modelBuilder.Entity("Models.CityPlace", b =>
+                {
+                    b.Navigation("Schedules");
                 });
 #pragma warning restore 612, 618
         }

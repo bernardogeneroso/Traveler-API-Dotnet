@@ -45,7 +45,7 @@ public class Create
             var existCityPlace = await _context.CitiesPlaces
                     .FirstOrDefaultAsync(x => x.CityId == request.Place.CityId
                         && x.CategoryId == request.Place.CategoryId
-                        && x.Name == request.Place.Name
+                        && x.Name == request.Place.Name, cancellationToken
                     );
 
             if (existCityPlace != null) return Result<Unit>.Failure("Place already exist");
@@ -56,7 +56,7 @@ public class Create
 
             _context.CitiesPlaces.Add(cityPlace);
 
-            var result = await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 
             if (!result) return Result<Unit>.Failure("Failed creating place");
 

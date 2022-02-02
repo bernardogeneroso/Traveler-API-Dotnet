@@ -9,6 +9,6 @@ public class CategoryCityValidator : AbstractValidator<CategoryCityDtoRequest>
     {
         RuleFor(x => x.Name)
             .NotEmpty()
-            .MaximumLength(50);
+            .WithMessage("Name is required");
     }
 }

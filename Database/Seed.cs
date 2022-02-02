@@ -200,48 +200,60 @@ public class Seed
                     City = cities[0],
                     Category = categories[0],
                     Name = "Doce & Companhia",
+                    PhoneNumber = "(+351) 912 345 678",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[0],
                     Category = categories[0],
                     Name = "O Pequeno Café",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[0],
                     Category = categories[0],
                     Name = "O Pão de Queijo",
+                    PhoneNumber = "(+351) 912 345 678",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[0],
                     Category = categories[0],
                     Name = "Estrada Café",
+                    PhoneNumber = "(+351) 912 345 678",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[0],
                     Category = categories[0],
                     Name = "Café da Manhã",
+                    PhoneNumber = "(+351) 912 345 678",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[0],
                     Category = categories[0],
                     Name = "Bela Vida Café",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[0],
                     Category = categories[0],
                     Name = "Café a gosto",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[0],
                     Category = categories[0],
                     Name = "Café Creme",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
 
                 new CityPlace
@@ -249,30 +261,35 @@ public class Seed
                     City = cities[0],
                     Category = categories[1],
                     Name = "Torre de Londres",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[0],
                     Category = categories[1],
                     Name = "Templo Wat Pho",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[0],
                     Category = categories[1],
                     Name = "Burj Khalifa",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[0],
                     Category = categories[1],
                     Name = "Pagode Shwedagon",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[0],
                     Category = categories[1],
                     Name = "Sydney Opera House",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
 
                 new CityPlace
@@ -280,36 +297,42 @@ public class Seed
                     City = cities[0],
                     Category = categories[2],
                     Name = "Festival do amanhã",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[0],
                     Category = categories[2],
                     Name = "The Point Arrow",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[0],
                     Category = categories[2],
                     Name = "Festival dos Canários",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[0],
                     Category = categories[2],
                     Name = "Festival de Lagoa",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[0],
                     Category = categories[2],
                     Name = "Fuji Rock Festival",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[0],
                     Category = categories[2],
                     Name = "Expo Tattoo Floripa",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
 
                 new CityPlace
@@ -317,36 +340,42 @@ public class Seed
                     City = cities[1],
                     Category = categories[0],
                     Name = "Café da Madeira",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[1],
                     Category = categories[0],
                     Name = "Café Quentinho",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[1],
                     Category = categories[0],
                     Name = "Café de Londres",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[1],
                     Category = categories[0],
                     Name = "Café do Amanhã",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[1],
                     Category = categories[0],
                     Name = "Café da Noite",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[1],
                     Category = categories[0],
                     Name = "Doce & Café",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
 
                 new CityPlace
@@ -354,24 +383,28 @@ public class Seed
                     City = cities[1],
                     Category = categories[1],
                     Name = "Le Grande",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[1],
                     Category = categories[1],
                     Name = "La Baguette",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[1],
                     Category = categories[1],
                     Name = "Le Petit",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[1],
                     Category = categories[1],
                     Name = "The paradise",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
 
                 new CityPlace
@@ -379,24 +412,28 @@ public class Seed
                     City = cities[1],
                     Category = categories[2],
                     Name = "Festival do dia",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[1],
                     Category = categories[2],
                     Name = "Expo International Festival",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[1],
                     Category = categories[2],
                     Name = "Festival da Cidade",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
                 new CityPlace
                 {
                     City = cities[1],
                     Category = categories[2],
                     Name = "Festival da Amadora",
+                    Description = "Aenean sed luctus sem, nec tempor erat. Donec aliquam erat urna. Nulla non mauris justo."
                 },
             };
 

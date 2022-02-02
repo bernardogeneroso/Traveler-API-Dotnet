@@ -36,7 +36,7 @@ public class Create
 
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var categories = await _context.CategoriesCities.Select(x => x.Name).ToListAsync();
+            var categories = await _context.CategoriesCities.Select(x => x.Name).ToListAsync(cancellationToken);
 
             if (categories.Count() == 3) return Result<Unit>.Failure("Cannot add more than 3 categories");
 
@@ -48,7 +48,7 @@ public class Create
 
             _context.CategoriesCities.Add(category);
 
-            var result = await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 
             if (!result) return Result<Unit>.Failure("Failed to create category");
 

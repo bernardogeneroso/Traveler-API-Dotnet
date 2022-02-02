@@ -4,9 +4,15 @@ using Services.CitiesPlaces.DTOs;
 
 namespace API.Controllers;
 
-[Route("api/cities/place")]
+[Route("api/cities/places")]
 public class CitiesPlacesController : BaseApiController
 {
+    [HttpGet("{cityId}")]
+    public async Task<IActionResult> GetPlaces(Guid cityId, [FromQuery] Guid categoryId)
+    {
+        return HandleResult(await Mediator.Send(new List.Query { CityId = cityId, CategoryId = categoryId }));
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreatePlace([FromBody] CityPlaceDtoRequest place)
     {

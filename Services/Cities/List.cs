@@ -64,7 +64,7 @@ public class List
             {
                 var cities = await query
                         .ProjectTo<CityDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
-                        .ToListAsync();
+                        .ToListAsync(cancellationToken);
 
                 cities = cities.Select(x =>
                 {
@@ -82,7 +82,7 @@ public class List
             return Result<List<CityDtoQuery>>.Success(
                 await query
                 .ProjectTo<CityDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
-                .ToListAsync()
+                .ToListAsync(cancellationToken)
             );
         }
     }

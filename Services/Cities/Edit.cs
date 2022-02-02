@@ -19,7 +19,7 @@ public class Edit
     {
         public CommandValidator()
         {
-            RuleFor(x => x.City).SetValidator(new CityValidator());
+            RuleFor(x => x.City).SetValidator(new CityValidator()).NotEmpty();
         }
     }
 

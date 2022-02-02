@@ -37,7 +37,7 @@ public class Create
         {
             var city = await _context.Cities
                     .Where(x => x.Name == request.City.Name)
-                    .FirstOrDefaultAsync();
+                    .FirstOrDefaultAsync(cancellationToken);
 
             if (city != null) return Result<Unit>.Failure("City already exists");
 

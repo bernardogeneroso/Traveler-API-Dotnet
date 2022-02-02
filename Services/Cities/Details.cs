@@ -35,14 +35,14 @@ public class Details
                         .Include(x => x.Detail)
                         .AsNoTracking()
                         .ProjectTo<CityDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
-                        .FirstOrDefaultAsync(x => x.Id == request.Id);
+                        .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
             if (cityDto == null) return Result<CityDtoDetailQuery>.Failure("City not found");
 
             var categoriesDto = await _context.CategoriesCities
                         .AsNoTracking()
                         .ProjectTo<CategoryCityDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
-                        .ToListAsync();
+                        .ToListAsync(cancellationToken);
 
             var cityDtoDetail = new CityDtoDetailQuery
             {
