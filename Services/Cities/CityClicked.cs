@@ -23,7 +23,7 @@ public class CityClicked
 
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var cityDb = await _context.Cities
+            var cityDb = await _context.City
                     .Select(x => new { x.Id, x.ClickedCount })
                     .FirstOrDefaultAsync(x => x.Id == request.Id);
 

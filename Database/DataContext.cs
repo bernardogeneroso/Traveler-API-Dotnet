@@ -10,11 +10,12 @@ public class DataContext : IdentityDbContext<AppUser>
     {
     }
 
-    public DbSet<City> Cities => Set<City>();
-    public DbSet<CityDetail> CitiesDetails => Set<CityDetail>();
-    public DbSet<CityPlace> CitiesPlaces => Set<CityPlace>();
-    public DbSet<CategoryCity> CategoriesCities => Set<CategoryCity>();
-    public DbSet<CityPlaceSchedule> CitiesPlacesSchedules => Set<CityPlaceSchedule>();
+    public DbSet<City> City => Set<City>();
+    public DbSet<CityDetail> CityDetail => Set<CityDetail>();
+    public DbSet<CityPlace> CityPlace => Set<CityPlace>();
+    public DbSet<CategoryCity> CategoryCity => Set<CategoryCity>();
+    public DbSet<CityPlaceSchedule> CityPlaceSchedule => Set<CityPlaceSchedule>();
+    public DbSet<PlaceMessage> PlaceMessage => Set<PlaceMessage>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -68,6 +69,17 @@ public class DataContext : IdentityDbContext<AppUser>
 
             x.HasOne(c => c.Place)
                 .WithMany(cp => cp.Schedules)
+                .HasForeignKey(c => c.PlaceId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<PlaceMessage>(x =>
+        {
+            x.ToTable("PlacesMessagess")
+                .HasKey(x => x.Id);
+
+            x.HasOne(c => c.Place)
+                .WithMany(cp => cp.Messages)
                 .HasForeignKey(c => c.PlaceId)
                 .OnDelete(DeleteBehavior.Cascade);
         });

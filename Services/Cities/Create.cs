@@ -35,7 +35,7 @@ public class Create
 
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var city = await _context.Cities
+            var city = await _context.City
                     .Where(x => x.Name == request.City.Name)
                     .FirstOrDefaultAsync(cancellationToken);
 
@@ -43,7 +43,7 @@ public class Create
 
             var newCity = _mapper.Map(request.City, city);
 
-            _context.Cities.Add(newCity);
+            _context.City.Add(newCity);
 
             var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 

@@ -41,7 +41,7 @@ public class List
 
         public async Task<Result<List<CityPlaceDtoListQuery>>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var cityPlaces = _context.CitiesPlaces
+            var cityPlaces = _context.CityPlace
                 .Where(c => c.CityId == request.CityId)
                 .AsQueryable();
 

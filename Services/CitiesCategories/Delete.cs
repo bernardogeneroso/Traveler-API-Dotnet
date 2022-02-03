@@ -21,11 +21,11 @@ public class Delete
 
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var category = await _context.CategoriesCities.FindAsync(request.Id);
+            var category = await _context.CategoryCity.FindAsync(request.Id);
 
             if (category == null) return Result<Unit>.Failure("Category not found");
 
-            _context.CategoriesCities.Remove(category);
+            _context.CategoryCity.Remove(category);
 
             var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 

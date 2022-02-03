@@ -31,7 +31,7 @@ public class Detail
 
         public async Task<Result<CityPlaceDtoQuery>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var cityPlace = await _context.CitiesPlaces
+            var cityPlace = await _context.CityPlace
                     .Include(x => x.Schedules)
                     .ProjectTo<CityPlaceDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
                     .FirstOrDefaultAsync(x => x.Id == request.Id && x.CityId == request.CityId, cancellationToken);

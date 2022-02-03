@@ -1,6 +1,6 @@
 namespace Models;
 
-public class CityPlace
+public class CityPlace : BaseEntity
 {
     public Guid Id { get; set; }
     public Guid CityId { get; set; }
@@ -12,4 +12,5 @@ public class CityPlace
     public City City { get; set; }
     public CategoryCity Category { get; set; }
     public ICollection<CityPlaceSchedule> Schedules { get; set; } = new List<CityPlaceSchedule>();
+    public ICollection<PlaceMessage> Messages { get; set; } = new List<PlaceMessage>();
 }

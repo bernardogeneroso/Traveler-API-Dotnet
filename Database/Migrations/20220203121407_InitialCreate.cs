@@ -240,7 +240,9 @@ namespace Database.Migrations
                     Name = table.Column<string>(type: "text", nullable: true),
                     ImageName = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: true)
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -267,13 +269,39 @@ namespace Database.Migrations
                     PlaceId = table.Column<Guid>(type: "uuid", nullable: false),
                     DayWeek = table.Column<int>(type: "integer", nullable: false),
                     StartTime = table.Column<float>(type: "real", nullable: true),
-                    EndTime = table.Column<float>(type: "real", nullable: true)
+                    EndTime = table.Column<float>(type: "real", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CitiesPlacesSchedules", x => x.Id);
                     table.ForeignKey(
                         name: "FK_CitiesPlacesSchedules_CitiesPlaces_PlaceId",
+                        column: x => x.PlaceId,
+                        principalTable: "CitiesPlaces",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PlacesMessagess",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    PlaceId = table.Column<Guid>(type: "uuid", nullable: false),
+                    DisplayName = table.Column<string>(type: "text", nullable: true),
+                    AvatarName = table.Column<string>(type: "text", nullable: true),
+                    Message = table.Column<string>(type: "text", nullable: true),
+                    Rating = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PlacesMessagess", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PlacesMessagess_CitiesPlaces_PlaceId",
                         column: x => x.PlaceId,
                         principalTable: "CitiesPlaces",
                         principalColumn: "Id",
@@ -333,6 +361,11 @@ namespace Database.Migrations
                 column: "PlaceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PlacesMessagess_PlaceId",
+                table: "PlacesMessagess",
+                column: "PlaceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RefreshesTokens_UserId",
                 table: "RefreshesTokens",
                 column: "UserId");
@@ -360,6 +393,9 @@ namespace Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "CitiesPlacesSchedules");
+
+            migrationBuilder.DropTable(
+                name: "PlacesMessagess");
 
             migrationBuilder.DropTable(
                 name: "RefreshesTokens");

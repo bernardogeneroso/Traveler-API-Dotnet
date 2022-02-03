@@ -31,7 +31,7 @@ public class Details
 
         public async Task<Result<CityDtoDetailQuery>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var cityDto = await _context.Cities
+            var cityDto = await _context.City
                         .Include(x => x.Detail)
                         .AsNoTracking()
                         .ProjectTo<CityDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
@@ -39,7 +39,7 @@ public class Details
 
             if (cityDto == null) return Result<CityDtoDetailQuery>.Failure("City not found");
 
-            var categoriesDto = await _context.CategoriesCities
+            var categoriesDto = await _context.CategoryCity
                         .AsNoTracking()
                         .ProjectTo<CategoryCityDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
                         .ToListAsync(cancellationToken);

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Database.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220202193632_InitialCreate")]
+    [Migration("20220203121407_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -309,6 +309,9 @@ namespace Database.Migrations
                     b.Property<Guid>("CityId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -320,6 +323,9 @@ namespace Database.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -336,6 +342,9 @@ namespace Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("DayWeek")
                         .HasColumnType("integer");
 
@@ -348,11 +357,48 @@ namespace Database.Migrations
                     b.Property<float?>("StartTime")
                         .HasColumnType("real");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.HasIndex("PlaceId");
 
                     b.ToTable("CitiesPlacesSchedules", (string)null);
+                });
+
+            modelBuilder.Entity("Models.PlaceMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AvatarName")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("PlaceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlaceId");
+
+                    b.ToTable("PlacesMessagess", (string)null);
                 });
 
             modelBuilder.Entity("Models.RefreshToken", b =>
@@ -472,6 +518,17 @@ namespace Database.Migrations
                     b.Navigation("Place");
                 });
 
+            modelBuilder.Entity("Models.PlaceMessage", b =>
+                {
+                    b.HasOne("Models.CityPlace", "Place")
+                        .WithMany("Messages")
+                        .HasForeignKey("PlaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Place");
+                });
+
             modelBuilder.Entity("Models.RefreshToken", b =>
                 {
                     b.HasOne("Models.AppUser", "User")
@@ -501,6 +558,8 @@ namespace Database.Migrations
 
             modelBuilder.Entity("Models.CityPlace", b =>
                 {
+                    b.Navigation("Messages");
+
                     b.Navigation("Schedules");
                 });
 #pragma warning restore 612, 618

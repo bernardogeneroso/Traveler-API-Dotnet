@@ -23,12 +23,12 @@ public class Delete
 
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var existSchedule = await _context.CitiesPlacesSchedules
+            var existSchedule = await _context.CityPlaceSchedule
                     .FirstOrDefaultAsync(x => x.Id == request.Id && x.PlaceId == request.PlaceId, cancellationToken);
 
             if (existSchedule == null) return Result<Unit>.Failure("Schedule not found");
 
-            _context.CitiesPlacesSchedules.Remove(existSchedule);
+            _context.CityPlaceSchedule.Remove(existSchedule);
 
             var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 

@@ -37,7 +37,7 @@ public class Seed
             }
         }
 
-        if (!context.Cities.Any() && !context.CategoriesCities.Any() && !context.CitiesPlaces.Any())
+        if (!context.City.Any() && !context.CategoryCity.Any() && !context.CityPlace.Any())
         {
             var cities = new List<City>
             {
@@ -173,7 +173,7 @@ public class Seed
                 },
             };
 
-            context.Cities.AddRange(cities);
+            context.City.AddRange(cities);
 
             var categories = new List<CategoryCity>
             {
@@ -191,7 +191,7 @@ public class Seed
                 },
             };
 
-            context.CategoriesCities.AddRange(categories);
+            context.CategoryCity.AddRange(categories);
 
             var cityPlaces = new List<CityPlace>
             {
@@ -448,7 +448,7 @@ public class Seed
                 });
             });
 
-            context.CitiesPlaces.AddRange(cityPlaces);
+            context.CityPlace.AddRange(cityPlaces);
 
             await context.SaveChangesAsync();
         }

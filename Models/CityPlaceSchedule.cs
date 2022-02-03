@@ -1,6 +1,6 @@
 namespace Models;
 
-public class CityPlaceSchedule
+public class CityPlaceSchedule : BaseEntity
 {
     public Guid Id { get; set; }
     public Guid PlaceId { get; set; }

@@ -47,7 +47,7 @@ public class List
 
             if (!resultValidation.IsValid) return Result<List<CityDtoQuery>>.Failure("Failed to get the cities", resultValidation);
 
-            var query = _context.Cities
+            var query = _context.City
                     .AsNoTracking()
                     .AsQueryable();
 

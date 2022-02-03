@@ -35,7 +35,7 @@ public class Edit
 
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var city = await _context.Cities
+            var city = await _context.City
                     .Include(x => x.Detail)
                     .FirstOrDefaultAsync(x => x.Id == request.City.Id);
 

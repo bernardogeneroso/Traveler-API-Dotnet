@@ -37,20 +37,20 @@ public class Create
 
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            if (!await _context.CitiesPlaces.AnyAsync(x => x.Id == request.PlaceId))
+            if (!await _context.CityPlace.AnyAsync(x => x.Id == request.PlaceId))
                 return Result<Unit>.Failure("City place not found");
 
-            if (await _context.CitiesPlacesSchedules.CountAsync(x => x.PlaceId == request.PlaceId) == 7)
+            if (await _context.CityPlaceSchedule.CountAsync(x => x.PlaceId == request.PlaceId) == 7)
                 return Result<Unit>.Failure("City place already has 7 schedules");
 
-            if (await _context.CitiesPlacesSchedules.AnyAsync(x => x.PlaceId == request.PlaceId && x.DayWeek == request.Schedule.DayWeek))
+            if (await _context.CityPlaceSchedule.AnyAsync(x => x.PlaceId == request.PlaceId && x.DayWeek == request.Schedule.DayWeek))
                 return Result<Unit>.Failure("City place already has a schedule for this day");
 
             var cityPlaceSchedule = _mapper.Map<CityPlaceSchedule>(request.Schedule);
 
             cityPlaceSchedule.PlaceId = request.PlaceId;
 
-            _context.CitiesPlacesSchedules.Add(cityPlaceSchedule);
+            _context.CityPlaceSchedule.Add(cityPlaceSchedule);
 
             var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 

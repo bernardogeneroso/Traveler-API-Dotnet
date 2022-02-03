@@ -36,13 +36,13 @@ public class Create
 
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var category = await _context.CategoriesCities.FindAsync(request.Place.CategoryId);
+            var category = await _context.CategoryCity.FindAsync(request.Place.CategoryId);
 
             if (category == null) return Result<Unit>.Failure("Category does not exist");
 
-            if (!_context.Cities.Any(x => x.Id == request.Place.CityId)) return Result<Unit>.Failure("City does not exist");
+            if (!_context.City.Any(x => x.Id == request.Place.CityId)) return Result<Unit>.Failure("City does not exist");
 
-            var existCityPlace = await _context.CitiesPlaces
+            var existCityPlace = await _context.CityPlace
                     .FirstOrDefaultAsync(x => x.CityId == request.Place.CityId
                         && x.CategoryId == request.Place.CategoryId
                         && x.Name == request.Place.Name, cancellationToken
@@ -54,7 +54,7 @@ public class Create
 
             var cityPlace = _mapper.Map<CityPlace>(request.Place);
 
-            _context.CitiesPlaces.Add(cityPlace);
+            _context.CityPlace.Add(cityPlace);
 
             var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 
