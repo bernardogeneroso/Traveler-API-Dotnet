@@ -22,7 +22,7 @@ public class List
     {
         public QueryValidator()
         {
-            RuleFor(x => x.Filter).InclusiveBetween(0, 2).NotEmpty();
+            RuleFor(x => x.Filter).InclusiveBetween(0, 2);
         }
     }
 

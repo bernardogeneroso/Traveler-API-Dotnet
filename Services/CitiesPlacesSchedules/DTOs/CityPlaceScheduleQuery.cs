@@ -4,9 +4,9 @@ namespace Services.CitiesPlacesSchedules.DTOs;
 
 public class CityPlaceScheduleQuery
 {
-    public Guid PlaceId { get; set; }
+    public Guid Id { get; set; }
     public DayWeek DayWeek { get; set; }
-    public TimeSpan StartTime { get; set; }
-    public TimeSpan EndTime { get; set; }
-    public bool IsClosed => StartTime == default && EndTime == default;
+    public float? StartTime { get; set; }
+    public float? EndTime { get; set; }
+    public bool IsClosed => StartTime == null && EndTime == null;
 }

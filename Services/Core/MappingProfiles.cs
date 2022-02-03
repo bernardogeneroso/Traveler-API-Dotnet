@@ -45,6 +45,7 @@ public class MappingProfiles : Profile
                         x.ImageName != null ?
                         $"{currentOrigin}/images/{x.ImageName}" : null));
 
+        CreateMap<CityPlaceSchedule, CityPlaceScheduleQuery>();
         CreateMap<CityPlaceScheduleResult, CityPlaceSchedule>();
     }
 }

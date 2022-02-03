@@ -9,10 +9,11 @@ using Services.CitiesPlacesSchedules.DTOs;
 
 namespace Services.CitiesPlacesSchedules;
 
-public class Create
+public class Edit
 {
     public class Command : IRequest<Result<Unit>>
     {
+        public Guid Id { get; set; }
         public Guid PlaceId { get; set; }
         public CityPlaceScheduleResult Schedule { get; set; }
     }
@@ -37,24 +38,18 @@ public class Create
 
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            if (!await _context.CitiesPlaces.AnyAsync(x => x.Id == request.PlaceId))
-                return Result<Unit>.Failure("City place not found");
+            var existSchedule = await _context.CitiesPlacesSchedules
+                    .FirstOrDefaultAsync(x => x.Id == request.Id && x.PlaceId == request.PlaceId, cancellationToken);
 
-            if (await _context.CitiesPlacesSchedules.CountAsync(x => x.PlaceId == request.PlaceId) == 7)
-                return Result<Unit>.Failure("City place already has 7 schedules");
+            if (existSchedule == null) return Result<Unit>.Failure("Schedule not found");
 
-            if (await _context.CitiesPlacesSchedules.AnyAsync(x => x.PlaceId == request.PlaceId && x.DayWeek == request.Schedule.DayWeek))
-                return Result<Unit>.Failure("City place already has a schedule for this day");
+            _mapper.Map(request.Schedule, existSchedule);
 
-            var cityPlaceSchedule = _mapper.Map<CityPlaceSchedule>(request.Schedule);
-
-            cityPlaceSchedule.PlaceId = request.PlaceId;
-
-            _context.CitiesPlacesSchedules.Add(cityPlaceSchedule);
+            _context.CitiesPlacesSchedules.Update(existSchedule);
 
             var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 
-            if (!result) return Result<Unit>.Failure("Could not create city place schedule");
+            if (!result) return Result<Unit>.Failure("Fail to update schedule");
 
             return Result<Unit>.SuccessNoContent(Unit.Value);
         }

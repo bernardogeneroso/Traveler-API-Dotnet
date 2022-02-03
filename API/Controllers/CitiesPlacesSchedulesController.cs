@@ -8,8 +8,20 @@ namespace API.Controllers;
 public class CitiesPlacesSchedulesController : BaseApiController
 {
     [HttpPost("{placeId}")]
-    public async Task<IActionResult> CreatePlaceScheduling(Guid placeId, [FromBody] CityPlaceScheduleResult placeSchedule)
+    public async Task<IActionResult> CreatePlaceScheduling(Guid placeId, [FromBody] CityPlaceScheduleResult schedule)
     {
-        return HandleResult(await Mediator.Send(new Services.CitiesPlacesSchedules.Create.Command { PlaceSchedule = placeSchedule, PlaceId = placeId }));
+        return HandleResult(await Mediator.Send(new Services.CitiesPlacesSchedules.Create.Command { Schedule = schedule, PlaceId = placeId }));
+    }
+
+    [HttpPut("{placeId}/{id}")]
+    public async Task<IActionResult> EditPlaceScheduling(Guid placeId, Guid id, [FromBody] CityPlaceScheduleResult schedule)
+    {
+        return HandleResult(await Mediator.Send(new Services.CitiesPlacesSchedules.Edit.Command { Schedule = schedule, Id = id, PlaceId = placeId }));
+    }
+
+    [HttpDelete("{placeId}/{id}")]
+    public async Task<IActionResult> DeletePlaceScheduling(Guid placeId, Guid id)
+    {
+        return HandleResult(await Mediator.Send(new Services.CitiesPlacesSchedules.Delete.Command { Id = id, PlaceId = placeId }));
     }
 }

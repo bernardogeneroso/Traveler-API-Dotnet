@@ -13,6 +13,12 @@ public class CitiesPlacesController : BaseApiController
         return HandleResult(await Mediator.Send(new List.Query { CityId = cityId, CategoryId = categoryId }));
     }
 
+    [HttpGet("{cityId}/{id}")]
+    public async Task<IActionResult> GetPlace(Guid cityId, Guid id)
+    {
+        return HandleResult(await Mediator.Send(new Detail.Query { CityId = cityId, Id = id }));
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreatePlace([FromBody] CityPlaceDtoRequest place)
     {
