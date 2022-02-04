@@ -1,3 +1,4 @@
+using Models.Helpers;
 using Services.CitiesPlacesSchedules.DTOs;
 
 namespace Services.CitiesPlaces.DTOs;
@@ -9,6 +10,7 @@ public class CityPlaceDtoQuery
     public string Name { get; set; }
     public string Description { get; set; }
     public string PhoneNumber { get; set; }
-    public string ImageName { get; set; }
-    public List<CityPlaceScheduleQuery> Schedules { get; set; } = new List<CityPlaceScheduleQuery>();
+    public float? Rating { get; set; }
+    public Image Image { get; set; }
+    public List<CityPlaceScheduleDtoQuery> Schedules { get; set; } = new List<CityPlaceScheduleDtoQuery>();
 }

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Database.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220203121407_InitialCreate")]
+    [Migration("20220203173324_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -324,6 +324,9 @@ namespace Database.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
+                    b.Property<float?>("Rating")
+                        .HasColumnType("real");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -334,6 +337,40 @@ namespace Database.Migrations
                     b.HasIndex("CityId");
 
                     b.ToTable("CitiesPlaces", (string)null);
+                });
+
+            modelBuilder.Entity("Models.CityPlaceMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AvatarName")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("PlaceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlaceId");
+
+                    b.ToTable("CitiesPlacesMessagess", (string)null);
                 });
 
             modelBuilder.Entity("Models.CityPlaceSchedule", b =>
@@ -365,40 +402,6 @@ namespace Database.Migrations
                     b.HasIndex("PlaceId");
 
                     b.ToTable("CitiesPlacesSchedules", (string)null);
-                });
-
-            modelBuilder.Entity("Models.PlaceMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("AvatarName")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("DisplayName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Message")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("PlaceId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlaceId");
-
-                    b.ToTable("PlacesMessagess", (string)null);
                 });
 
             modelBuilder.Entity("Models.RefreshToken", b =>
@@ -507,10 +510,10 @@ namespace Database.Migrations
                     b.Navigation("City");
                 });
 
-            modelBuilder.Entity("Models.CityPlaceSchedule", b =>
+            modelBuilder.Entity("Models.CityPlaceMessage", b =>
                 {
                     b.HasOne("Models.CityPlace", "Place")
-                        .WithMany("Schedules")
+                        .WithMany("Messages")
                         .HasForeignKey("PlaceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -518,10 +521,10 @@ namespace Database.Migrations
                     b.Navigation("Place");
                 });
 
-            modelBuilder.Entity("Models.PlaceMessage", b =>
+            modelBuilder.Entity("Models.CityPlaceSchedule", b =>
                 {
                     b.HasOne("Models.CityPlace", "Place")
-                        .WithMany("Messages")
+                        .WithMany("Schedules")
                         .HasForeignKey("PlaceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

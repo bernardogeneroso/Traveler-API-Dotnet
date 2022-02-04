@@ -1,6 +1,6 @@
 namespace Models;
 
-public class PlaceMessage : BaseEntity
+public class CityPlaceMessage : BaseEntity
 {
     public Guid Id { get; set; }
     public Guid PlaceId { get; set; }

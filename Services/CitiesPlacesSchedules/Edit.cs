@@ -14,7 +14,7 @@ public class Edit
     {
         public Guid Id { get; set; }
         public Guid PlaceId { get; set; }
-        public CityPlaceScheduleResult Schedule { get; set; }
+        public CityPlaceScheduleDtoResult Schedule { get; set; }
     }
 
     public class CommandValidator : AbstractValidator<Command>

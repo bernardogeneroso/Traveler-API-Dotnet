@@ -9,8 +9,9 @@ public class CityPlace : BaseEntity
     public string ImageName { get; set; }
     public string Description { get; set; }
     public string PhoneNumber { get; set; }
+    public float? Rating { get; set; }
     public City City { get; set; }
     public CategoryCity Category { get; set; }
     public ICollection<CityPlaceSchedule> Schedules { get; set; } = new List<CityPlaceSchedule>();
-    public ICollection<PlaceMessage> Messages { get; set; } = new List<PlaceMessage>();
+    public ICollection<CityPlaceMessage> Messages { get; set; } = new List<CityPlaceMessage>();
 }

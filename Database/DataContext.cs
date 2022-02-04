@@ -15,7 +15,7 @@ public class DataContext : IdentityDbContext<AppUser>
     public DbSet<CityPlace> CityPlace => Set<CityPlace>();
     public DbSet<CategoryCity> CategoryCity => Set<CategoryCity>();
     public DbSet<CityPlaceSchedule> CityPlaceSchedule => Set<CityPlaceSchedule>();
-    public DbSet<PlaceMessage> PlaceMessage => Set<PlaceMessage>();
+    public DbSet<CityPlaceMessage> CityPlaceMessage => Set<CityPlaceMessage>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -73,9 +73,9 @@ public class DataContext : IdentityDbContext<AppUser>
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        builder.Entity<PlaceMessage>(x =>
+        builder.Entity<CityPlaceMessage>(x =>
         {
-            x.ToTable("PlacesMessagess")
+            x.ToTable("CitiesPlacesMessagess")
                 .HasKey(x => x.Id);
 
             x.HasOne(c => c.Place)

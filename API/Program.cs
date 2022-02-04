@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using API.Extensions;
 using API.Middleware;
 using Database;
@@ -6,6 +5,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using Providers.SignalR;
 using Services.Cities;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +41,7 @@ app.UseAuthorization();
 app.UseStaticFiles();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/chat");
 
 using var scope = app.Services.CreateScope();
 

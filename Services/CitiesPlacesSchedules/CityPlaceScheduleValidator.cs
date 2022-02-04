@@ -3,7 +3,7 @@ using Services.CitiesPlacesSchedules.DTOs;
 
 namespace Services.CitiesPlacesSchedules;
 
-public class CityPlaceScheduleValidator : AbstractValidator<CityPlaceScheduleResult>
+public class CityPlaceScheduleValidator : AbstractValidator<CityPlaceScheduleDtoResult>
 {
     public CityPlaceScheduleValidator()
     {

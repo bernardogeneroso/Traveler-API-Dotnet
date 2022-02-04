@@ -81,6 +81,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IImageAccessor, ImageAccessor>();
         services.AddScoped<IOriginAccessor, OriginAccessor>();
         services.AddScoped<IMailAccessor, MailAccessor>();
+        services.AddSignalR();
 
         return services;
     }
