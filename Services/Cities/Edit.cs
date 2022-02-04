@@ -37,7 +37,7 @@ public class Edit
         {
             var city = await _context.City
                     .Include(x => x.Detail)
-                    .FirstOrDefaultAsync(x => x.Id == request.City.Id);
+                    .FirstOrDefaultAsync(x => x.Id == request.City.Id, cancellationToken);
 
             if (city == null) return Result<Unit>.Failure("Couldn't find the city");
 

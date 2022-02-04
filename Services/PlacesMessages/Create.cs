@@ -41,7 +41,7 @@ public class Create
 
         public async Task<Result<CityPlaceMessageDtoCommand>> Handle(Command request, CancellationToken cancellationToken)
         {
-            if (!_context.CityPlace.Any(x => x.Id == request.PlaceId)) return Result<CityPlaceMessageDtoCommand>.Failure("Failed to create message");
+            if (!await _context.CityPlace.AnyAsync(x => x.Id == request.PlaceId, cancellationToken)) return Result<CityPlaceMessageDtoCommand>.Failure("Failed to create message");
 
             var cityPlaceMessage = _mapper.Map<CityPlaceMessage>(request.Message);
 
@@ -71,7 +71,7 @@ public class Create
 
             _context.Entry(place).Property(x => x.Rating).IsModified = true;
 
-            var result2 = await _context.SaveChangesAsync(cancellationToken) > 0;
+            var result2 = await _context.SaveChangesAsync() > 0;
 
             if (!result2) return Result<CityPlaceMessageDtoCommand>.Failure("Failed to create message");
 

@@ -24,11 +24,11 @@ public class SetHighlighted
 
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var place = await _context.CityPlace.FirstOrDefaultAsync(x => x.Id == request.Id && x.CityId == request.CityId);
+            var place = await _context.CityPlace.FirstOrDefaultAsync(x => x.Id == request.Id && x.CityId == request.CityId, cancellationToken);
 
             if (place == null) return Result<Unit>.Failure("Failed to set highlighted place");
 
-            var oldPlaceHighlighted = await _context.CityPlace.Select(x => new { x.Id, x.CityId, x.IsHighlighted }).FirstOrDefaultAsync(x => x.CityId == request.CityId && x.IsHighlighted);
+            var oldPlaceHighlighted = await _context.CityPlace.Select(x => new { x.Id, x.CityId, x.IsHighlighted }).FirstOrDefaultAsync(x => x.CityId == request.CityId && x.IsHighlighted, cancellationToken);
 
             if (oldPlaceHighlighted != null)
             {

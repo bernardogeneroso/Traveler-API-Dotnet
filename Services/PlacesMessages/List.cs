@@ -11,12 +11,12 @@ namespace Services.PlacesMessages;
 
 public class List
 {
-    public class Query : IRequest<Result<CityPlaceMessageDtoQuery>>
+    public class Query : IRequest<Result<List<CityPlaceMessageDtoQuery>>>
     {
         public Guid PlaceId { get; set; }
     }
 
-    public class Handler : IRequestHandler<Query, Result<CityPlaceMessageDtoQuery>>
+    public class Handler : IRequestHandler<Query, Result<List<CityPlaceMessageDtoQuery>>>
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
@@ -28,14 +28,14 @@ public class List
             _context = context;
         }
 
-        public async Task<Result<CityPlaceMessageDtoQuery>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<Result<List<CityPlaceMessageDtoQuery>>> Handle(Query request, CancellationToken cancellationToken)
         {
-
             var cityPlaceMessage = await _context.CityPlaceMessage
                 .ProjectTo<CityPlaceMessageDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
-                .FirstOrDefaultAsync(x => x.PlaceId == request.PlaceId, cancellationToken);
+                .Where(x => x.PlaceId == request.PlaceId)
+                .ToListAsync(cancellationToken);
 
-            return Result<CityPlaceMessageDtoQuery>.Success(cityPlaceMessage);
+            return Result<List<CityPlaceMessageDtoQuery>>.Success(cityPlaceMessage);
         }
     }
 }

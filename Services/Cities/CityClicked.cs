@@ -25,7 +25,7 @@ public class CityClicked
         {
             var cityDb = await _context.City
                     .Select(x => new { x.Id, x.ClickedCount })
-                    .FirstOrDefaultAsync(x => x.Id == request.Id);
+                    .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
             if (cityDb == null) return Result<Unit>.Failure("Couldn't add a click to the city");
 
