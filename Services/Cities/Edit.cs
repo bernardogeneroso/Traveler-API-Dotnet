@@ -54,7 +54,7 @@ public class Edit
                     if (resultDeleteImage == null) return Result<Unit>.Failure("Failed to delete image");
                 }
 
-                var uploadResult = await _imageAccessor.AddImage(request.City.File);
+                var uploadResult = await _imageAccessor.AddImage(request.City.File, cancellationToken);
 
                 city.ImageName = uploadResult.Filename;
                 city.ImagePublicId = uploadResult.PublicId;

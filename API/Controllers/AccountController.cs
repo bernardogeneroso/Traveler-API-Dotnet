@@ -21,9 +21,11 @@ public class AccountController : ControllerBase
     private readonly IUserAccessor _userAccessor;
     private readonly IImageAccessor _imageAccessor;
     private readonly IMailAccessor _mailAccessor;
+    private readonly IConfiguration _config;
 
-    public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, TokenService tokenService, IUserAccessor userAccessor, IImageAccessor imageAccessor, IMailAccessor mailAccessor)
+    public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IConfiguration config, TokenService tokenService, IUserAccessor userAccessor, IImageAccessor imageAccessor, IMailAccessor mailAccessor)
     {
+        _config = config;
         _mailAccessor = mailAccessor;
         _imageAccessor = imageAccessor;
         _userAccessor = userAccessor;
@@ -159,14 +161,14 @@ public class AccountController : ControllerBase
 
         if (user == null) return Unauthorized();
 
-        if (user.AvatarName != null)
+        if (user.AvatarPublicId != null)
         {
-            var resultDeleteImage = _imageAccessor.DeleteImage(user.AvatarName);
+            var resultDeleteImage = await _imageAccessor.DeleteImage(user.AvatarPublicId);
 
             if (resultDeleteImage == null) return BadRequest("Problem uploading image");
         }
 
-        var uploadResult = await _imageAccessor.AddImage(File);
+        var uploadResult = await _imageAccessor.AddImage(File, CancellationToken.None);
 
         if (uploadResult == null) return BadRequest("Problem uploading image");
 
@@ -238,7 +240,7 @@ public class AccountController : ControllerBase
 
     private UserDto CreateUserObject(AppUser user, string origin)
     {
-        var pathImage = user?.AvatarName != null ? Path.Combine(origin, "images", user.AvatarName) : null;
+        var pathImage = user.AvatarName != null ? $"{_config.GetSection("Cloudinary").GetValue<string>("Url")}/{user.AvatarPublicId}" : null;
 
         if (user == null) return null;
 

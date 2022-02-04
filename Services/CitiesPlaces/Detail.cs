@@ -32,7 +32,6 @@ public class Detail
 
         public async Task<Result<CityPlaceDtoQuery>> Handle(Query request, CancellationToken cancellationToken)
         {
-            // TODO: Verify Schedule with OrderBy
             var place = await _context.CityPlace
                     .AsNoTracking()
                     .Include(x => x.Schedules)

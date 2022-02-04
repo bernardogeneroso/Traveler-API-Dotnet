@@ -4,7 +4,7 @@ namespace Services.Interfaces;
 
 public interface IImageAccessor
 {
-    Task<ImageAccessorUploadResult> AddImage(IFormFile File);
+    Task<ImageAccessorUploadResult> AddImage(IFormFile File, CancellationToken? cancellationToken = null);
     Task<string> DeleteImage(string publicId);
 }
 

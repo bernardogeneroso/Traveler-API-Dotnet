@@ -21,10 +21,8 @@ public class ImageAccessor : IImageAccessor
         _cloudinary.Api.Secure = true;
     }
 
-    public async Task<ImageAccessorUploadResult> AddImage(IFormFile File)
+    public async Task<ImageAccessorUploadResult> AddImage(IFormFile File, CancellationToken? cancellationToken = null)
     {
-        // TODO: Add CancelationToken
-
         if (File.Length > 0)
         {
             await using var stream = File.OpenReadStream();
@@ -35,7 +33,7 @@ public class ImageAccessor : IImageAccessor
                 Transformation = new Transformation().Width(500).Height(500).Crop("fill")
             };
 
-            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams, cancellationToken);
 
             if (uploadResult.Error != null) throw new Exception(uploadResult.Error.Message);
 

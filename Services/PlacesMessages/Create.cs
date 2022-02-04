@@ -52,7 +52,7 @@ public class Create
 
             var cityPlaceMessage = _mapper.Map<CityPlaceMessage>(request.Message);
 
-            var uploadResult = await _imageAccessor.AddImage(request.Message.File);
+            var uploadResult = await _imageAccessor.AddImage(request.Message.File, cancellationToken);
 
             if (uploadResult == null) return Result<CityPlaceMessageDtoCommand>.Failure("Failed to upload image");
 
