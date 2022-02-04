@@ -18,11 +18,5 @@ public class CityPlaceValidator : AbstractValidator<CityPlaceDtoRequest>
         RuleFor(x => x.Description)
             .NotEmpty()
             .WithMessage("Description is required");
-        RuleFor(x => x.CategoryId)
-            .NotEmpty()
-            .WithMessage("Category is required");
-        RuleFor(x => x.CityId)
-            .NotEmpty()
-            .WithMessage("City id is required");
     }
 }

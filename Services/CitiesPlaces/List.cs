@@ -15,7 +15,8 @@ public class List
     public class Query : IRequest<Result<List<CityPlaceDtoListQuery>>>
     {
         public Guid CityId { get; set; }
-        public Guid CategoryId { get; set; }
+        public Guid? CategoryId { get; set; }
+        public bool? TopRated { get; set; }
     }
 
     public class QueryValidator : AbstractValidator<Query>
@@ -45,14 +46,22 @@ public class List
                 .Where(c => c.CityId == request.CityId)
                 .AsQueryable();
 
-            if (request.CategoryId != Guid.Empty)
+            if (request.CategoryId != null)
             {
                 cityPlaces = cityPlaces.Where(x => x.CategoryId == request.CategoryId);
             }
 
+            if (request.TopRated != null && request.TopRated == true)
+            {
+                cityPlaces = cityPlaces
+                        .OrderByDescending(x => x.Rating != null)
+                        .ThenByDescending(x => x.Rating)
+                        .Take(4);
+            }
+
             return Result<List<CityPlaceDtoListQuery>>.Success(
                 await cityPlaces
-                    .ProjectTo<CityPlaceDtoListQuery>(_mapper.ConfigurationProvider)
+                    .ProjectTo<CityPlaceDtoListQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
                     .ToListAsync(cancellationToken)
             );
         }

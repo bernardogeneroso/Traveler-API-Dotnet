@@ -13,6 +13,8 @@ public class Create
 {
     public class Command : IRequest<Result<Unit>>
     {
+        public Guid CityId { get; set; }
+        public Guid CategoryId { get; set; }
         public CityPlaceDtoRequest Place { get; set; }
     }
 
@@ -36,15 +38,15 @@ public class Create
 
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var category = await _context.CategoryCity.FindAsync(request.Place.CategoryId);
+            var category = await _context.CategoryCity.FindAsync(request.CategoryId);
 
             if (category == null) return Result<Unit>.Failure("Category does not exist");
 
-            if (!_context.City.Any(x => x.Id == request.Place.CityId)) return Result<Unit>.Failure("City does not exist");
+            if (!_context.City.Any(x => x.Id == request.CityId)) return Result<Unit>.Failure("City does not exist");
 
             var existCityPlace = await _context.CityPlace
-                    .FirstOrDefaultAsync(x => x.CityId == request.Place.CityId
-                        && x.CategoryId == request.Place.CategoryId
+                    .FirstOrDefaultAsync(x => x.CityId == request.CityId
+                        && x.CategoryId == request.CategoryId
                         && x.Name == request.Place.Name, cancellationToken
                     );
 

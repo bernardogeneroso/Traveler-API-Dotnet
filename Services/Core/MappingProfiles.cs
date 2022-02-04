@@ -49,6 +49,12 @@ public class MappingProfiles : Profile
                     new Image { Name = src.ImageName, Url = $"{currentOrigin}/images/{src.ImageName}" }
                     : null
                 ));
+        CreateMap<CityPlace, CityPlaceDtoHighlightQuery>()
+                .ForMember(dest => dest.Image,
+                opt => opt.MapFrom(src => src.ImageName != null ?
+                    new Image { Name = src.ImageName, Url = $"{currentOrigin}/images/{src.ImageName}" }
+                    : null
+                ));
 
         CreateMap<CityPlaceSchedule, CityPlaceScheduleDtoQuery>();
         CreateMap<CityPlaceScheduleDtoResult, CityPlaceSchedule>();

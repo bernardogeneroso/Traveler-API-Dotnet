@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Services.Cities.DTOs;
 using Services.CitiesCategories.DTOs;
+using Services.CitiesPlaces.DTOs;
 using Services.Interfaces;
 
 namespace Services.Cities;
@@ -44,9 +45,15 @@ public class Details
                         .ProjectTo<CategoryCityDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
                         .ToListAsync(cancellationToken);
 
+            var placeHighlighted = await _context.CityPlace
+                        .AsNoTracking()
+                        .ProjectTo<CityPlaceDtoHighlightQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
+                        .FirstOrDefaultAsync(x => x.CityId == cityDto.Id && x.IsHighlighted, cancellationToken);
+
             var cityDtoDetail = new CityDtoDetailQuery
             {
                 City = cityDto,
+                PlaceHighlighted = placeHighlighted,
                 Categories = categoriesDto
             };
 

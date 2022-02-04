@@ -8,9 +8,9 @@ namespace API.Controllers;
 public class CitiesPlacesController : BaseApiController
 {
     [HttpGet("{cityId}")]
-    public async Task<IActionResult> GetPlaces(Guid cityId, [FromQuery] Guid categoryId)
+    public async Task<IActionResult> GetPlaces(Guid cityId, [FromQuery] Guid? categoryId, [FromQuery] bool? topRated)
     {
-        return HandleResult(await Mediator.Send(new List.Query { CityId = cityId, CategoryId = categoryId }));
+        return HandleResult(await Mediator.Send(new List.Query { CityId = cityId, CategoryId = categoryId, TopRated = topRated }));
     }
 
     [HttpGet("{cityId}/{id}")]
@@ -19,10 +19,16 @@ public class CitiesPlacesController : BaseApiController
         return HandleResult(await Mediator.Send(new Detail.Query { CityId = cityId, Id = id }));
     }
 
-    [HttpPost]
-    public async Task<IActionResult> CreatePlace([FromBody] CityPlaceDtoRequest place)
+    [HttpPost("{cityId}/{categoryId}")]
+    public async Task<IActionResult> CreatePlace(Guid cityId, Guid categoryId, [FromBody] CityPlaceDtoRequest place)
     {
-        return HandleResult(await Mediator.Send(new Create.Command { Place = place }));
+        return HandleResult(await Mediator.Send(new Create.Command { Place = place, CityId = cityId, CategoryId = categoryId }));
+    }
+
+    [HttpPost("{cityId}/setHighlighted/{id}")]
+    public async Task<IActionResult> SetPlaceHighlighted(Guid cityId, Guid id)
+    {
+        return HandleResult(await Mediator.Send(new SetHighlighted.Command { CityId = cityId, Id = id }));
     }
 
     [HttpDelete("{id}")]

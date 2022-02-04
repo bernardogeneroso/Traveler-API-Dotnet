@@ -58,12 +58,13 @@ public class Create
                     .Select(x => x.Rating)
                     .AverageAsync(cancellationToken);
 
-            var averageRound = (float)Math.Round(averangeMessagesOfPlace * 2, MidpointRounding.AwayFromZero) / 2;
+            var averageRoundMessage = (float)Math.Round(averangeMessagesOfPlace * 2, MidpointRounding.AwayFromZero) / 2;
+            var averageRoundPlace = (float)Math.Round(averangeMessagesOfPlace, 1);
 
             var place = new CityPlace
             {
                 Id = request.PlaceId,
-                Rating = averageRound
+                Rating = averageRoundPlace
             };
 
             _context.Attach(place);
@@ -81,7 +82,7 @@ public class Create
             var cityPlaceMessageDtoCommand = new CityPlaceMessageDtoCommand
             {
                 Message = cityPlaceMessageDto,
-                PlaceRating = averageRound
+                PlaceRating = averageRoundMessage
             };
 
             return Result<CityPlaceMessageDtoCommand>.Success(cityPlaceMessageDtoCommand);
