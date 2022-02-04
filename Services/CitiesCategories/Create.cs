@@ -36,7 +36,10 @@ public class Create
 
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var categories = await _context.CategoryCity.Select(x => x.Name).ToListAsync(cancellationToken);
+            var categories = await _context.CategoryCity
+                    .AsNoTracking()
+                    .Select(x => x.Name)
+                    .ToListAsync(cancellationToken);
 
             if (categories.Count() == 3) return Result<Unit>.Failure("Cannot add more than 3 categories");
 

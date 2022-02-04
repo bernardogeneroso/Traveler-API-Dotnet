@@ -5,6 +5,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Services.Cities.DTOs;
+using Services.Interfaces;
 
 namespace Services.Cities;
 
@@ -12,6 +13,7 @@ public class Edit
 {
     public class Command : IRequest<Result<Unit>>
     {
+        public Guid Id { get; set; }
         public CityDtoRequest City { get; set; }
     }
 
@@ -27,8 +29,10 @@ public class Edit
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
-        public Handler(DataContext context, IMapper mapper)
+        private readonly IImageAccessor _imageAccessor;
+        public Handler(DataContext context, IMapper mapper, IImageAccessor imageAccessor)
         {
+            _imageAccessor = imageAccessor;
             _mapper = mapper;
             _context = context;
         }
@@ -37,9 +41,22 @@ public class Edit
         {
             var city = await _context.City
                     .Include(x => x.Detail)
-                    .FirstOrDefaultAsync(x => x.Id == request.City.Id, cancellationToken);
+                    .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
             if (city == null) return Result<Unit>.Failure("Couldn't find the city");
+
+            if (request.City.File != null && request.City.File.Length > 0)
+            {
+                if (city.ImagePublicId != null)
+                {
+                    await _imageAccessor.DeleteImage(city.ImagePublicId);
+                }
+
+                var uploadResult = await _imageAccessor.AddImage(request.City.File);
+
+                city.ImageName = uploadResult.Filename;
+                city.ImagePublicId = uploadResult.PublicId;
+            }
 
             _mapper.Map(request.City, city);
 

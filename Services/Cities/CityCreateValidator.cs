@@ -1,12 +1,11 @@
 using FluentValidation;
 using Services.Cities.DTOs;
-using Services.CitiesDetails;
 
 namespace Services.Cities;
 
-public class CityValidator : AbstractValidator<CityDtoRequest>
+public class CityCreateValidator : AbstractValidator<CityDtoCreateRequest>
 {
-    public CityValidator()
+    public CityCreateValidator()
     {
         RuleFor(x => x.Name)
                 .NotEmpty()
@@ -22,5 +21,14 @@ public class CityValidator : AbstractValidator<CityDtoRequest>
         RuleFor(x => x.SubDescription)
                 .NotEmpty()
                 .WithMessage("Sub description is required");
+        RuleFor(x => x.File.Length)
+                .NotNull()
+                .WithMessage("File is required")
+                .LessThanOrEqualTo(1 * 1024 * 1024) // 1mb
+                .WithMessage("File size is larger than allowed limit 1MB");
+        RuleFor(x => x.File.ContentType)
+                .Must(x => x.Contains("image"))
+                .WithMessage("File must be an image")
+                .NotEmpty();
     }
 }

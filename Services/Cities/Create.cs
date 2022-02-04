@@ -5,6 +5,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Services.Cities.DTOs;
+using Services.Interfaces;
 
 namespace Services.Cities;
 
@@ -12,14 +13,14 @@ public class Create
 {
     public class Command : IRequest<Result<Unit>>
     {
-        public CityDtoRequest City { get; set; }
+        public CityDtoCreateRequest City { get; set; }
     }
 
     public class CommandValidator : AbstractValidator<Command>
     {
         public CommandValidator()
         {
-            RuleFor(x => x.City).SetValidator(new CityValidator()).NotEmpty();
+            RuleFor(x => x.City).SetValidator(new CityCreateValidator()).NotEmpty();
         }
     }
 
@@ -27,8 +28,10 @@ public class Create
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
-        public Handler(DataContext context, IMapper mapper)
+        private readonly IImageAccessor _imageAccessor;
+        public Handler(DataContext context, IMapper mapper, IImageAccessor imageAccessor)
         {
+            _imageAccessor = imageAccessor;
             _mapper = mapper;
             _context = context;
         }
@@ -36,12 +39,18 @@ public class Create
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
             var city = await _context.City
+                    .AsNoTracking()
                     .Where(x => x.Name == request.City.Name)
                     .FirstOrDefaultAsync(cancellationToken);
 
             if (city != null) return Result<Unit>.Failure("City already exists");
 
             var newCity = _mapper.Map(request.City, city);
+
+            var uploadResult = await _imageAccessor.AddImage(request.City.File);
+
+            newCity.ImageName = uploadResult.Filename;
+            newCity.ImagePublicId = uploadResult.PublicId;
 
             _context.City.Add(newCity);
 

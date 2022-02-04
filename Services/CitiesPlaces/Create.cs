@@ -42,9 +42,10 @@ public class Create
 
             if (category == null) return Result<Unit>.Failure("Category does not exist");
 
-            if (!await _context.City.AnyAsync(x => x.Id == request.CityId, cancellationToken)) return Result<Unit>.Failure("City does not exist");
+            if (!await _context.City.AsNoTracking().AnyAsync(x => x.Id == request.CityId, cancellationToken)) return Result<Unit>.Failure("City does not exist");
 
             var existCityPlace = await _context.CityPlace
+                    .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.CityId == request.CityId
                         && x.CategoryId == request.CategoryId
                         && x.Name == request.Place.Name, cancellationToken

@@ -9,5 +9,5 @@ public class CityPlaceMessageDtoQuery
     public string DisplayName { get; set; }
     public string Message { get; set; }
     public int Rating { get; set; } = 0;
-    public Avatar Avatar { get; set; }
+    public AvatarDto Avatar { get; set; }
 }

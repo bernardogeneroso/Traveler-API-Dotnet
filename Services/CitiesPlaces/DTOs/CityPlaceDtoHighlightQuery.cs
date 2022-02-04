@@ -10,5 +10,5 @@ public class CityPlaceDtoHighlightQuery
     public string Name { get; set; }
     public float? Rating { get; set; }
     public bool IsHighlighted { get; set; }
-    public Image Image { get; set; }
+    public ImageDto Image { get; set; }
 }

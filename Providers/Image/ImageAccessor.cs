@@ -1,66 +1,60 @@
-using Microsoft.AspNetCore.Hosting;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Services.Interfaces;
 
 namespace Providers.Image;
 
 public class ImageAccessor : IImageAccessor
 {
-    private readonly IWebHostEnvironment _environment;
-    private readonly ILogger<ImageAccessor> _logger;
-    private readonly IOriginAccessor _originAccessor;
-    public ImageAccessor(IWebHostEnvironment environment, IOriginAccessor originAccessor, ILogger<ImageAccessor> logger)
+    private readonly Cloudinary _cloudinary;
+    public ImageAccessor(IOptions<CloudinarySettings> config)
     {
-        _originAccessor = originAccessor;
-        _logger = logger;
-        _environment = environment;
+        var account = new Account(
+            config.Value.CloudName,
+            config.Value.ApiKey,
+            config.Value.ApiSecret
+        );
+
+        _cloudinary = new Cloudinary(account);
+        _cloudinary.Api.Secure = true;
     }
 
-    public async Task<string> AddImage(IFormFile File, string fileName)
+    public async Task<ImageAccessorUploadResult> AddImage(IFormFile File)
     {
-        try
+        if (File.Length > 0)
         {
-            var directoryPath = _environment.WebRootPath + "/images";
+            await using var stream = File.OpenReadStream();
 
-            if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
-
-            var path = Path.Combine(_environment.WebRootPath, "images", fileName);
-
-            using (var stream = new FileStream(path, FileMode.Create))
+            var uploadParams = new ImageUploadParams
             {
-                await File.CopyToAsync(stream);
-                await stream.FlushAsync();
+                File = new FileDescription(File.FileName, stream),
+                Transformation = new Transformation().Width(500).Height(500).Crop("fill")
+            };
 
-                var url = Path.Combine(_originAccessor.GetOrigin(), "images", fileName);
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
-                return url;
-            }
+            if (uploadResult.Error != null) throw new Exception(uploadResult.Error.Message);
+
+            return new ImageAccessorUploadResult
+            {
+                PublicId = uploadResult.PublicId,
+                Filename = File.FileName
+            };
         }
-        catch (Exception ex)
-        {
-            if (_environment.IsDevelopment()) _logger.LogError(ex.Message);
 
-            return null;
-        }
+        return null;
     }
 
-    public bool DeleteImage(string imageName)
+    public async Task<string> DeleteImage(string publicId)
     {
-        try
-        {
-            var path = Path.Combine(_environment.WebRootPath, "images", imageName);
+        var deleteParams = new DeletionParams(publicId);
 
-            if (File.Exists(path)) File.Delete(path);
+        var result = await _cloudinary.DestroyAsync(deleteParams);
 
-            return true;
-        }
-        catch (Exception ex)
-        {
-            if (_environment.IsDevelopment()) _logger.LogError(ex.Message);
+        if (result.Result != "ok") return null;
 
-            return false;
-        }
+        return result.Result;
     }
 }

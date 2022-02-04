@@ -13,4 +13,5 @@ public class AvatarDto
 {
     public string AvatarName { get; set; }
     public string Url { get; set; }
+    public string PublicId { get; set; }
 }

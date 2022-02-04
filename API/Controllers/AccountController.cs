@@ -20,11 +20,11 @@ public class AccountController : ControllerBase
     private readonly TokenService _tokenService;
     private readonly IUserAccessor _userAccessor;
     private readonly IImageAccessor _imageAccessor;
-    private readonly IMailAccessor _mailAccesor;
+    private readonly IMailAccessor _mailAccessor;
 
-    public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, TokenService tokenService, IUserAccessor userAccessor, IImageAccessor imageAccessor, IMailAccessor mailAccesor)
+    public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, TokenService tokenService, IUserAccessor userAccessor, IImageAccessor imageAccessor, IMailAccessor mailAccessor)
     {
-        _mailAccesor = mailAccesor;
+        _mailAccessor = mailAccessor;
         _imageAccessor = imageAccessor;
         _userAccessor = userAccessor;
         _tokenService = tokenService;
@@ -100,7 +100,7 @@ public class AccountController : ControllerBase
 
         var body = $"Please verify your email by clicking on the button below.";
 
-        await _mailAccesor.SendMail(user.Email, "RentX - Verify your email", user.DisplayName, button, body);
+        await _mailAccessor.SendMail(user.Email, "RentX - Verify your email", user.DisplayName, button, body);
 
         return Ok("User registered");
     }
@@ -147,7 +147,7 @@ public class AccountController : ControllerBase
 
         var body = $"Please verify your email by clicking on the button below.";
 
-        await _mailAccesor.SendMail(user.Email, "RentX - Verify your email", user.DisplayName, button, body);
+        await _mailAccessor.SendMail(user.Email, "RentX - Verify your email", user.DisplayName, button, body);
 
         return Ok("Email verification link resent");
     }
@@ -159,20 +159,19 @@ public class AccountController : ControllerBase
 
         if (user == null) return Unauthorized();
 
-        var fileName = $"{Guid.NewGuid().ToString()}_{File.FileName}";
-
         if (user.AvatarName != null)
         {
             var resultDeleteImage = _imageAccessor.DeleteImage(user.AvatarName);
 
-            if (!resultDeleteImage) return BadRequest("Problem uploading image");
+            if (resultDeleteImage == null) return BadRequest("Problem uploading image");
         }
 
-        var path = await _imageAccessor.AddImage(File, fileName);
+        var uploadResult = await _imageAccessor.AddImage(File);
 
-        if (path == null) return BadRequest("Problem uploading image");
+        if (uploadResult == null) return BadRequest("Problem uploading image");
 
-        user.AvatarName = fileName;
+        user.AvatarName = uploadResult.Filename;
+        user.AvatarPublicId = uploadResult.PublicId;
 
         await _userManager.UpdateAsync(user);
 
@@ -245,13 +244,14 @@ public class AccountController : ControllerBase
 
         var userDto = new UserDto
         {
-            DisplayName = user.DisplayName ?? "",
+            DisplayName = user.DisplayName,
             Username = user.UserName,
             Token = _tokenService.CreateToken(user),
             Avatar = pathImage != null ? new AvatarDto
             {
                 AvatarName = user.AvatarName,
                 Url = pathImage,
+                PublicId = user.AvatarPublicId
             } : null
         };
 

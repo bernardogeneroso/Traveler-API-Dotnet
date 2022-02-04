@@ -19,15 +19,6 @@ public class List
         public bool? TopRated { get; set; }
     }
 
-    public class QueryValidator : AbstractValidator<Query>
-    {
-        public QueryValidator()
-        {
-            RuleFor(x => x.CityId).NotEmpty();
-            RuleFor(x => x.CategoryId).NotEmpty();
-        }
-    }
-
     public class Handler : IRequestHandler<Query, Result<List<CityPlaceDtoListQuery>>>
     {
         private readonly DataContext _context;
@@ -43,6 +34,7 @@ public class List
         public async Task<Result<List<CityPlaceDtoListQuery>>> Handle(Query request, CancellationToken cancellationToken)
         {
             var cityPlaces = _context.CityPlace
+                .AsNoTracking()
                 .Where(c => c.CityId == request.CityId)
                 .AsQueryable();
 

@@ -1,4 +1,9 @@
 {
     "cSpell.words": ["Mediat"],
-    "cSpell.ignoreWords": ["Jimy", "jimytester"]
+    "cSpell.ignoreWords": [
+        "Cloudinary",
+        "CloudinarySettings",
+        "Jimy",
+        "jimytester"
+    ]
 }

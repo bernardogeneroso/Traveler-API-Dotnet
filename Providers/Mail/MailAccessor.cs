@@ -31,7 +31,6 @@ public class MailAccessor : IMailAccessor
             .UsingTemplateFromFile(path, new { DisplayName = displayName, Body = body, MailButton = mailButton })
             .SendAsync();
 
-
         if (!newEmail.Successful) throw new Exception("Error sending email");
     }
 }

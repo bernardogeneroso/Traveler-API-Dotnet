@@ -7,5 +7,5 @@ public class CategoryCityDtoQuery
     public Guid Id { get; set; }
     public string Name { get; set; }
     public int Places { get; set; }
-    public Image Image { get; set; }
+    public ImageDto Image { get; set; }
 }

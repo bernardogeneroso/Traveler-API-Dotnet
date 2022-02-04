@@ -8,5 +8,5 @@ public class CityPlaceDtoListQuery
     public Guid CategoryId { get; set; }
     public string Name { get; set; }
     public float? Rating { get; set; }
-    public Image Image { get; set; }
+    public ImageDto Image { get; set; }
 }

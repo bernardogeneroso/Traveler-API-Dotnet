@@ -54,6 +54,7 @@ public class Create
             if (!result) return Result<CityPlaceMessageDtoCommand>.Failure("Failed to create message");
 
             var averangeMessagesOfPlace = await _context.CityPlaceMessage
+                    .AsNoTracking()
                     .Where(x => x.PlaceId == request.PlaceId)
                     .Select(x => x.Rating)
                     .AverageAsync(cancellationToken);
@@ -71,13 +72,13 @@ public class Create
 
             _context.Entry(place).Property(x => x.Rating).IsModified = true;
 
-            var result2 = await _context.SaveChangesAsync() > 0;
+            var result2 = await _context.SaveChangesAsync(cancellationToken) > 0;
 
             if (!result2) return Result<CityPlaceMessageDtoCommand>.Failure("Failed to create message");
 
             var cityPlaceMessageDto = _mapper.Map<CityPlaceMessageDtoQuery>(cityPlaceMessage,
                     opt => opt.AfterMap((src, dest) => dest.Avatar =
-                    new Avatar { Name = "user.png", Url = $"{_originAccessor.GetOrigin()}/images/user.png" }));
+                    new AvatarDto { Name = "user.png", Url = $"{_originAccessor.GetOrigin()}/images/user.png" }));
 
             var cityPlaceMessageDtoCommand = new CityPlaceMessageDtoCommand
             {

@@ -37,13 +37,19 @@ public class Create
 
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            if (!await _context.CityPlace.AnyAsync(x => x.Id == request.PlaceId))
+            var cityExist = _context.CityPlace.AsNoTracking().AnyAsync(x => x.Id == request.PlaceId);
+            var scheduleCount = _context.CityPlaceSchedule.AsNoTracking().CountAsync(x => x.PlaceId == request.PlaceId);
+            var scheduleUnavailable = _context.CityPlaceSchedule.AsNoTracking().AnyAsync(x => x.PlaceId == request.PlaceId && x.DayWeek == request.Schedule.DayWeek);
+
+            await Task.WhenAll(cityExist, scheduleCount, scheduleUnavailable);
+
+            if (!await cityExist)
                 return Result<Unit>.Failure("City place not found");
 
-            if (await _context.CityPlaceSchedule.CountAsync(x => x.PlaceId == request.PlaceId) == 7)
+            if (await scheduleCount == 7)
                 return Result<Unit>.Failure("City place already has 7 schedules");
 
-            if (await _context.CityPlaceSchedule.AnyAsync(x => x.PlaceId == request.PlaceId && x.DayWeek == request.Schedule.DayWeek))
+            if (await scheduleUnavailable)
                 return Result<Unit>.Failure("City place already has a schedule for this day");
 
             var cityPlaceSchedule = _mapper.Map<CityPlaceSchedule>(request.Schedule);

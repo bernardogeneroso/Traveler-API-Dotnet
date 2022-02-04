@@ -4,7 +4,6 @@ using Models.Helpers;
 using Services.Cities.DTOs;
 using Services.CitiesCategories.DTOs;
 using Services.CitiesDetails;
-using Services.CitiesDetails.DTOs;
 using Services.CitiesPlaces.DTOs;
 using Services.CitiesPlacesSchedules.DTOs;
 using Services.PlacesMessages.DTOs;
@@ -16,22 +15,33 @@ public class MappingProfiles : Profile
     public MappingProfiles()
     {
         string currentOrigin = null;
+        string currentUrlCloudinary = null;
 
         CreateMap<City, CityDtoQuery>()
                 .ForMember(dest => dest.Image,
                 opt => opt.MapFrom(src => src.ImageName != null ?
-                    new Image { Name = src.ImageName, Url = $"{currentOrigin}/images/{src.ImageName}" }
+                    new ImageDto { Name = src.ImageName, Url = $"{currentUrlCloudinary}/{src.ImagePublicId}", PublicId = src.ImagePublicId }
                     : null
                 ));
-        CreateMap<CityDtoRequest, City>();
+        CreateMap<City, CityDtoDetailsQuery>()
+                .ForMember(dest => dest.Image,
+                opt => opt.MapFrom(src => src.ImageName != null ?
+                    new ImageDto { Name = src.ImageName, Url = $"{currentUrlCloudinary}/{src.ImagePublicId}", PublicId = src.ImagePublicId }
+                    : null
+                ));
+        CreateMap<CityDtoRequest, City>()
+                .ForPath(dest => dest.Detail.Description, opt => opt.MapFrom(src => src.Description))
+                .ForPath(dest => dest.Detail.SubDescription, opt => opt.MapFrom(src => src.SubDescription));
+        CreateMap<CityDtoCreateRequest, City>()
+                .ForPath(dest => dest.Detail.Description, opt => opt.MapFrom(src => src.Description))
+                .ForPath(dest => dest.Detail.SubDescription, opt => opt.MapFrom(src => src.SubDescription));
 
         CreateMap<CityDetail, CityDetailDtoQuery>();
-        CreateMap<CityDetailDtoRequest, CityDetail>();
 
         CreateMap<CategoryCity, CategoryCityDtoQuery>()
                 .ForMember(dest => dest.Image,
                 opt => opt.MapFrom(src => src.ImageName != null ?
-                    new Image { Name = src.ImageName, Url = $"{currentOrigin}/images/{src.ImageName}" }
+                    new ImageDto { Name = src.ImageName, Url = $"{currentOrigin}/images/{src.ImageName}", PublicId = src.ImagePublicId }
                     : null
                 ));
         CreateMap<CategoryCityDtoRequest, CategoryCity>();
@@ -40,19 +50,19 @@ public class MappingProfiles : Profile
         CreateMap<CityPlace, CityPlaceDtoListQuery>()
                 .ForMember(dest => dest.Image,
                 opt => opt.MapFrom(src => src.ImageName != null ?
-                    new Image { Name = src.ImageName, Url = $"{currentOrigin}/images/{src.ImageName}" }
+                    new ImageDto { Name = src.ImageName, Url = $"{currentOrigin}/images/{src.ImageName}", PublicId = src.ImagePublicId }
                     : null
                 ));
         CreateMap<CityPlace, CityPlaceDtoQuery>()
                 .ForMember(dest => dest.Image,
                 opt => opt.MapFrom(src => src.ImageName != null ?
-                    new Image { Name = src.ImageName, Url = $"{currentOrigin}/images/{src.ImageName}" }
+                    new ImageDto { Name = src.ImageName, Url = $"{currentOrigin}/images/{src.ImageName}", PublicId = src.ImagePublicId }
                     : null
                 ));
         CreateMap<CityPlace, CityPlaceDtoHighlightQuery>()
                 .ForMember(dest => dest.Image,
                 opt => opt.MapFrom(src => src.ImageName != null ?
-                    new Image { Name = src.ImageName, Url = $"{currentOrigin}/images/{src.ImageName}" }
+                    new ImageDto { Name = src.ImageName, Url = $"{currentOrigin}/images/{src.ImageName}", PublicId = src.ImagePublicId }
                     : null
                 ));
 

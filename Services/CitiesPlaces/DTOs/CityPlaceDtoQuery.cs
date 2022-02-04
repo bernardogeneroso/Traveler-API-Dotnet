@@ -11,6 +11,6 @@ public class CityPlaceDtoQuery
     public string Description { get; set; }
     public string PhoneNumber { get; set; }
     public float? Rating { get; set; }
-    public Image Image { get; set; }
+    public ImageDto Image { get; set; }
     public List<CityPlaceScheduleDtoQuery> Schedules { get; set; } = new List<CityPlaceScheduleDtoQuery>();
 }

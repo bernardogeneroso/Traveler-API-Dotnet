@@ -19,15 +19,13 @@ public class CitiesController : BaseApiController
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> EditCity(Guid id, [FromBody] CityDtoRequest City)
+    public async Task<IActionResult> EditCity(Guid id, [FromForm] CityDtoRequest City)
     {
-        City.Id = id;
-
-        return HandleResult(await Mediator.Send(new Edit.Command { City = City }));
+        return HandleResult(await Mediator.Send(new Edit.Command { Id = id, City = City }));
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateCity([FromBody] CityDtoRequest city)
+    public async Task<IActionResult> CreateCity([FromForm] CityDtoCreateRequest city)
     {
         return HandleResult(await Mediator.Send(new Create.Command { City = city }));
     }

@@ -31,6 +31,7 @@ public class List
         public async Task<Result<List<CityPlaceMessageDtoQuery>>> Handle(Query request, CancellationToken cancellationToken)
         {
             var cityPlaceMessage = await _context.CityPlaceMessage
+                .AsNoTracking()
                 .ProjectTo<CityPlaceMessageDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
                 .Where(x => x.PlaceId == request.PlaceId)
                 .ToListAsync(cancellationToken);

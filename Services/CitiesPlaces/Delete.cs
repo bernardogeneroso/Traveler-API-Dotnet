@@ -21,8 +21,7 @@ public class Delete
 
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var existCityPlace = await _context.CityPlace
-                    .FindAsync(request.Id);
+            var existCityPlace = await _context.CityPlace.FindAsync(request.Id);
 
             if (existCityPlace == null) return Result<Unit>.Failure("Failed to delete the place");
 

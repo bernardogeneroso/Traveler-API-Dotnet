@@ -5,8 +5,8 @@ using Database;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Services.Cities.DTOs;
-using Services.Interfaces;
 
 namespace Services.Cities;
 
@@ -30,12 +30,12 @@ public class List
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
-        private readonly IOriginAccessor _originAccessor;
+        private readonly IConfiguration _config;
 
-        public Handler(DataContext context, IMapper mapper, IOriginAccessor originAccessor)
+        public Handler(DataContext context, IMapper mapper, IConfiguration config)
         {
+            _config = config;
             _mapper = mapper;
-            _originAccessor = originAccessor;
             _context = context;
         }
 
@@ -60,10 +60,13 @@ public class List
                 query = query.OrderBy(x => x.Name);
             }
 
+            var urlCloudinary = _config.GetSection("Cloudinary").GetValue<string>("Url");
+
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
                 var cities = await query
-                        .ProjectTo<CityDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
+                        .AsNoTracking()
+                        .ProjectTo<CityDtoQuery>(_mapper.ConfigurationProvider, new { currentUrlCloudinary = urlCloudinary })
                         .ToListAsync(cancellationToken);
 
                 cities = cities.Select(x =>
@@ -81,7 +84,7 @@ public class List
 
             return Result<List<CityDtoQuery>>.Success(
                 await query
-                .ProjectTo<CityDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
+                .ProjectTo<CityDtoQuery>(_mapper.ConfigurationProvider, new { currentUrlCloudinary = urlCloudinary })
                 .ToListAsync(cancellationToken)
             );
         }
