@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Database.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220204135812_AllTableWithImageNameAddPublicId")]
-    partial class AllTableWithImageNameAddPublicId
+    [Migration("20220204164439_InitalCreate")]
+    partial class InitalCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -361,6 +361,9 @@ namespace Database.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("AvatarName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("AvatarPublicId")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")

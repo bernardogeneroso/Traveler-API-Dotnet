@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models;
 using Services.CitiesCategories.DTOs;
+using Services.Interfaces;
 
 namespace Services.CitiesCategories;
 
@@ -28,8 +29,10 @@ public class Create
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
-        public Handler(DataContext context, IMapper mapper)
+        private readonly IImageAccessor _imageAccessor;
+        public Handler(DataContext context, IMapper mapper, IImageAccessor imageAccessor)
         {
+            _imageAccessor = imageAccessor;
             _mapper = mapper;
             _context = context;
         }
@@ -48,6 +51,13 @@ public class Create
             if (existCategory) return Result<Unit>.Failure("Category already exist");
 
             var category = _mapper.Map<CategoryCity>(request.Category);
+
+            var uploadResult = await _imageAccessor.AddImage(request.Category.File);
+
+            if (uploadResult == null) return Result<Unit>.Failure("Failed to upload image");
+
+            category.ImageName = uploadResult.Filename;
+            category.ImagePublicId = uploadResult.PublicId;
 
             _context.CategoryCity.Add(category);
 

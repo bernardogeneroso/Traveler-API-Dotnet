@@ -20,7 +20,7 @@ public class CitiesPlacesController : BaseApiController
     }
 
     [HttpPost("{cityId}/{categoryId}")]
-    public async Task<IActionResult> CreatePlace(Guid cityId, Guid categoryId, [FromBody] CityPlaceDtoRequest place)
+    public async Task<IActionResult> CreatePlace(Guid cityId, Guid categoryId, [FromForm] CityPlaceDtoRequest place)
     {
         return HandleResult(await Mediator.Send(new Create.Command { Place = place, CityId = cityId, CategoryId = categoryId }));
     }

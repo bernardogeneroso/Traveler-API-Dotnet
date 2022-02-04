@@ -5,17 +5,19 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Models;
-using Providers.SignalR;
 using Services.Cities;
+using Services.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers().AddFluentValidation(cfg =>
-{
-    cfg.RegisterValidatorsFromAssemblyContaining<List>();
-});
+builder.Services
+    .AddControllers()
+    .AddFluentValidation(cfg =>
+    {
+        cfg.RegisterValidatorsFromAssemblyContaining<List>();
+    });
 
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityService(builder.Configuration);

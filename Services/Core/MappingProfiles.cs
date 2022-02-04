@@ -14,7 +14,6 @@ public class MappingProfiles : Profile
 {
     public MappingProfiles()
     {
-        string currentOrigin = null;
         string currentUrlCloudinary = null;
 
         CreateMap<City, CityDtoQuery>()
@@ -41,7 +40,7 @@ public class MappingProfiles : Profile
         CreateMap<CategoryCity, CategoryCityDtoQuery>()
                 .ForMember(dest => dest.Image,
                 opt => opt.MapFrom(src => src.ImageName != null ?
-                    new ImageDto { Name = src.ImageName, Url = $"{currentOrigin}/images/{src.ImageName}", PublicId = src.ImagePublicId }
+                    new ImageDto { Name = src.ImageName, Url = $"{currentUrlCloudinary}/{src.ImagePublicId}", PublicId = src.ImagePublicId }
                     : null
                 ));
         CreateMap<CategoryCityDtoRequest, CategoryCity>();
@@ -50,19 +49,19 @@ public class MappingProfiles : Profile
         CreateMap<CityPlace, CityPlaceDtoListQuery>()
                 .ForMember(dest => dest.Image,
                 opt => opt.MapFrom(src => src.ImageName != null ?
-                    new ImageDto { Name = src.ImageName, Url = $"{currentOrigin}/images/{src.ImageName}", PublicId = src.ImagePublicId }
+                    new ImageDto { Name = src.ImageName, Url = $"{currentUrlCloudinary}/{src.ImageName}", PublicId = src.ImagePublicId }
                     : null
                 ));
         CreateMap<CityPlace, CityPlaceDtoQuery>()
                 .ForMember(dest => dest.Image,
                 opt => opt.MapFrom(src => src.ImageName != null ?
-                    new ImageDto { Name = src.ImageName, Url = $"{currentOrigin}/images/{src.ImageName}", PublicId = src.ImagePublicId }
+                    new ImageDto { Name = src.ImageName, Url = $"{currentUrlCloudinary}/{src.ImageName}", PublicId = src.ImagePublicId }
                     : null
                 ));
         CreateMap<CityPlace, CityPlaceDtoHighlightQuery>()
                 .ForMember(dest => dest.Image,
                 opt => opt.MapFrom(src => src.ImageName != null ?
-                    new ImageDto { Name = src.ImageName, Url = $"{currentOrigin}/images/{src.ImageName}", PublicId = src.ImagePublicId }
+                    new ImageDto { Name = src.ImageName, Url = $"{currentUrlCloudinary}/{src.ImageName}", PublicId = src.ImagePublicId }
                     : null
                 ));
 

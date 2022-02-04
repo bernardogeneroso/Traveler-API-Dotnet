@@ -1,6 +1,7 @@
 using Application.Core;
 using Database;
 using MediatR;
+using Services.Interfaces;
 
 namespace Services.CitiesCategories;
 
@@ -14,8 +15,10 @@ public class Delete
     public class Handler : IRequestHandler<Command, Result<Unit>>
     {
         private readonly DataContext _context;
-        public Handler(DataContext context)
+        private readonly IImageAccessor _imageAccessor;
+        public Handler(DataContext context, IImageAccessor imageAccessor)
         {
+            _imageAccessor = imageAccessor;
             _context = context;
         }
 
@@ -24,6 +27,11 @@ public class Delete
             var category = await _context.CategoryCity.FindAsync(request.Id);
 
             if (category == null) return Result<Unit>.Failure("Category not found");
+
+            if (category.ImagePublicId != null)
+            {
+                await _imageAccessor.DeleteImage(category.ImagePublicId);
+            }
 
             _context.CategoryCity.Remove(category);
 

@@ -23,6 +23,8 @@ public class ImageAccessor : IImageAccessor
 
     public async Task<ImageAccessorUploadResult> AddImage(IFormFile File)
     {
+        // TODO: Add CancelationToken
+
         if (File.Length > 0)
         {
             await using var stream = File.OpenReadStream();

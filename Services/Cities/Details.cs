@@ -42,23 +42,21 @@ public class Details
 
             if (cityDto == null) return Result<CityDtoGetQuery>.Failure("City not found");
 
-            var categoriesDto = _context.CategoryCity
+            var categoriesDto = await _context.CategoryCity
                         .AsNoTracking()
                         .ProjectTo<CategoryCityDtoQuery>(_mapper.ConfigurationProvider, new { currentUrlCloudinary = urlCloudinary })
                         .ToListAsync(cancellationToken);
 
-            var placeHighlighted = _context.CityPlace
+            var placeHighlighted = await _context.CityPlace
                         .AsNoTracking()
                         .ProjectTo<CityPlaceDtoHighlightQuery>(_mapper.ConfigurationProvider, new { currentUrlCloudinary = urlCloudinary })
                         .FirstOrDefaultAsync(x => x.CityId == cityDto.Id && x.IsHighlighted, cancellationToken);
 
-            await Task.WhenAll(categoriesDto, placeHighlighted);
-
             var cityDtoDetail = new CityDtoGetQuery
             {
                 City = cityDto,
-                PlaceHighlighted = await placeHighlighted,
-                Categories = await categoriesDto
+                PlaceHighlighted = placeHighlighted,
+                Categories = categoriesDto
             };
 
             return Result<CityDtoGetQuery>.Success(cityDtoDetail);

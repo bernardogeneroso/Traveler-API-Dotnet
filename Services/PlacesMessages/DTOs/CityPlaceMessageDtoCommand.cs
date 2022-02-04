@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace Services.PlacesMessages.DTOs;
 
 public class CityPlaceMessageDtoCommand

@@ -1,6 +1,7 @@
 using Application.Core;
 using Database;
 using MediatR;
+using Services.Interfaces;
 
 namespace Services.CitiesPlaces;
 
@@ -14,8 +15,10 @@ public class Delete
     public class Handler : IRequestHandler<Command, Result<Unit>>
     {
         private readonly DataContext _context;
-        public Handler(DataContext context)
+        private readonly IImageAccessor _imageAccessor;
+        public Handler(DataContext context, IImageAccessor imageAccessor)
         {
+            _imageAccessor = imageAccessor;
             _context = context;
         }
 
@@ -30,6 +33,11 @@ public class Delete
             if (category == null) return Result<Unit>.Failure("Failed to delete the place");
 
             category.Places -= 1;
+
+            if (existCityPlace.ImagePublicId != null)
+            {
+                await _imageAccessor.DeleteImage(existCityPlace.ImagePublicId);
+            }
 
             _context.CityPlace.Remove(existCityPlace);
 

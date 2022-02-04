@@ -3,11 +3,14 @@ using AutoMapper;
 using Database;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Models;
 using Models.Helpers;
 using Services.Interfaces;
 using Services.PlacesMessages.DTOs;
+using Services.SignalR;
 
 namespace Services.PlacesMessages;
 
@@ -31,11 +34,15 @@ public class Create
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
-        private readonly IOriginAccessor _originAccessor;
-        public Handler(DataContext context, IMapper mapper, IOriginAccessor originAccessor)
+        private readonly IHubContext<ChatHub, IChatHub> _hubContext;
+        private readonly IImageAccessor _imageAccessor;
+        private readonly IConfiguration _config;
+        public Handler(DataContext context, IMapper mapper, IHubContext<ChatHub, IChatHub> hubContext, IImageAccessor imageAccessor, IConfiguration config)
         {
-            _originAccessor = originAccessor;
+            _config = config;
+            _imageAccessor = imageAccessor;
             _mapper = mapper;
+            _hubContext = hubContext;
             _context = context;
         }
 
@@ -45,6 +52,12 @@ public class Create
 
             var cityPlaceMessage = _mapper.Map<CityPlaceMessage>(request.Message);
 
+            var uploadResult = await _imageAccessor.AddImage(request.Message.File);
+
+            if (uploadResult == null) return Result<CityPlaceMessageDtoCommand>.Failure("Failed to upload image");
+
+            cityPlaceMessage.AvatarName = uploadResult.Filename;
+            cityPlaceMessage.AvatarPublicId = uploadResult.PublicId;
             cityPlaceMessage.PlaceId = request.PlaceId;
 
             _context.CityPlaceMessage.Add(cityPlaceMessage);
@@ -76,15 +89,19 @@ public class Create
 
             if (!result2) return Result<CityPlaceMessageDtoCommand>.Failure("Failed to create message");
 
+            var urlCloudinary = _config.GetSection("Cloudinary").GetValue<string>("Url");
+
             var cityPlaceMessageDto = _mapper.Map<CityPlaceMessageDtoQuery>(cityPlaceMessage,
                     opt => opt.AfterMap((src, dest) => dest.Avatar =
-                    new AvatarDto { Name = "user.png", Url = $"{_originAccessor.GetOrigin()}/images/user.png" }));
+                    new AvatarDto { Name = cityPlaceMessage.AvatarName, Url = $"{urlCloudinary}/{cityPlaceMessage.AvatarPublicId}" }));
 
             var cityPlaceMessageDtoCommand = new CityPlaceMessageDtoCommand
             {
                 Message = cityPlaceMessageDto,
                 PlaceRating = averageRoundMessage
             };
+
+            await _hubContext.Clients.Group(request.PlaceId.ToString()).ReceiveMessage(cityPlaceMessageDtoCommand);
 
             return Result<CityPlaceMessageDtoCommand>.Success(cityPlaceMessageDtoCommand);
         }

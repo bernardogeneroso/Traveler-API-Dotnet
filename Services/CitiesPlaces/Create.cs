@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Models;
 using Services.CitiesPlaces.DTOs;
+using Services.Interfaces;
 
 namespace Services.CitiesPlaces;
 
@@ -30,8 +31,10 @@ public class Create
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
-        public Handler(DataContext context, IMapper mapper)
+        private readonly IImageAccessor _imageAccessor;
+        public Handler(DataContext context, IMapper mapper, IImageAccessor imageAccessor)
         {
+            _imageAccessor = imageAccessor;
             _mapper = mapper;
             _context = context;
         }
@@ -56,6 +59,16 @@ public class Create
             category.Places += 1;
 
             var cityPlace = _mapper.Map<CityPlace>(request.Place);
+
+            var uploadResult = await _imageAccessor.AddImage(request.Place.File);
+
+            if (uploadResult == null) return Result<Unit>.Failure("Failed to upload image");
+
+            cityPlace.ImageName = uploadResult.Filename;
+            cityPlace.ImagePublicId = uploadResult.PublicId;
+
+            cityPlace.CityId = request.CityId;
+            cityPlace.CategoryId = request.CategoryId;
 
             _context.CityPlace.Add(cityPlace);
 

@@ -32,8 +32,8 @@ public class List
         {
             var cityPlaceMessage = await _context.CityPlaceMessage
                 .AsNoTracking()
-                .ProjectTo<CityPlaceMessageDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
                 .Where(x => x.PlaceId == request.PlaceId)
+                .ProjectTo<CityPlaceMessageDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
                 .ToListAsync(cancellationToken);
 
             return Result<List<CityPlaceMessageDtoQuery>>.Success(cityPlaceMessage);

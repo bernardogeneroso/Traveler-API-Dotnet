@@ -4,6 +4,7 @@ using AutoMapper.QueryableExtensions;
 using Database;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Services.CitiesPlaces.DTOs;
 using Services.Interfaces;
 
@@ -21,10 +22,10 @@ public class Detail
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
-        private readonly IOriginAccessor _originAccessor;
-        public Handler(DataContext context, IMapper mapper, IOriginAccessor originAccessor)
+        private readonly IConfiguration _config;
+        public Handler(DataContext context, IMapper mapper, IConfiguration config)
         {
-            _originAccessor = originAccessor;
+            _config = config;
             _mapper = mapper;
             _context = context;
         }
@@ -35,7 +36,7 @@ public class Detail
             var place = await _context.CityPlace
                     .AsNoTracking()
                     .Include(x => x.Schedules)
-                    .ProjectTo<CityPlaceDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
+                    .ProjectTo<CityPlaceDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _config.GetSection("Cloudinary").GetValue<string>("Url") })
                     .FirstOrDefaultAsync(x => x.Id == request.Id && x.CityId == request.CityId, cancellationToken);
 
             if (place == null) return Result<CityPlaceDtoQuery>.Failure("City place not found");

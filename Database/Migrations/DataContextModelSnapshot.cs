@@ -361,6 +361,9 @@ namespace Database.Migrations
                     b.Property<string>("AvatarName")
                         .HasColumnType("text");
 
+                    b.Property<string>("AvatarPublicId")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 

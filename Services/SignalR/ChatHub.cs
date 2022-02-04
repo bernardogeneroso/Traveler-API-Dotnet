@@ -1,23 +1,16 @@
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
+using Services.Interfaces;
 using Services.PlacesMessages;
-using Services.PlacesMessages.DTOs;
 
-namespace Providers.SignalR;
+namespace Services.SignalR;
 
-public class ChatHub : Hub
+public class ChatHub : Hub<IChatHub>
 {
     private readonly IMediator _mediator;
     public ChatHub(IMediator mediator)
     {
         _mediator = mediator;
-    }
-
-    public async Task SendMessage(Guid placeId, CityPlaceMessageDtoResult message)
-    {
-        var newMessage = await _mediator.Send(new Create.Command { Message = message });
-
-        await Clients.Group(placeId.ToString()).SendAsync("ReceiveMessage", newMessage);
     }
 
     public override async Task OnConnectedAsync()
@@ -29,6 +22,6 @@ public class ChatHub : Hub
 
         var result = await _mediator.Send(new List.Query { PlaceId = Guid.Parse(placeId) });
 
-        await Clients.Caller.SendAsync("LoadMessages", result.Value);
+        await Clients.Group(placeId.ToString()).LoadMessages(result.Value);
     }
 }
