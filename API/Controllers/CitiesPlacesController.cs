@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Services.CitiesPlaces;
 using Services.CitiesPlaces.DTOs;
+using Services.PlacesMessages.DTOs;
 
 namespace API.Controllers;
 
@@ -35,5 +36,11 @@ public class CitiesPlacesController : BaseApiController
     public async Task<IActionResult> Delete(Guid id)
     {
         return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
+    }
+
+    [HttpPost("messages/{placeId}")]
+    public async Task<IActionResult> CreateMessage(Guid placeId, [FromForm] CityPlaceMessageDtoResult commentMessage)
+    {
+        return HandleResult(await Mediator.Send(new Services.PlacesMessages.Create.Command { PlaceId = placeId, Message = commentMessage }));
     }
 }

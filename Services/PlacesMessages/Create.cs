@@ -26,7 +26,7 @@ public class Create
     {
         public CommandValidator()
         {
-            RuleFor(x => x.Message).SetValidator(new CityPlaceMessageValidator()).NotEmpty();
+            RuleFor(x => x.Message).SetValidator(new CityPlaceMessageValidator());
         }
     }
 
