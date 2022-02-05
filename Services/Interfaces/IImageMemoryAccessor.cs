@@ -4,6 +4,6 @@ namespace Services.Interfaces;
 
 public interface IImageMemoryAccessor
 {
-    Task<string> AddImage(IFormFile File, string fileName);
-    bool DeleteImage(string imageName);
+    Task<string> AddImageAsync(IFormFile File, string fileName);
+    Task<bool> DeleteImageAsync(string imageName);
 }

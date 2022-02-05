@@ -21,7 +21,7 @@ public class ImageAccessor : IImageAccessor
         _cloudinary.Api.Secure = true;
     }
 
-    public async Task<ImageAccessorUploadResult> AddImage(IFormFile File, CancellationToken? cancellationToken = null)
+    public async Task<ImageAccessorUploadResult> AddImageAsync(IFormFile File, CancellationToken? cancellationToken = null)
     {
         if (File.Length > 0)
         {
@@ -47,7 +47,7 @@ public class ImageAccessor : IImageAccessor
         return null;
     }
 
-    public async Task<string> DeleteImage(string publicId)
+    public async Task<string> DeleteImageAsync(string publicId)
     {
         var deleteParams = new DeletionParams(publicId);
 

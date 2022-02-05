@@ -52,7 +52,7 @@ public class Create
 
             var category = _mapper.Map<CategoryCity>(request.Category);
 
-            var uploadResult = await _imageAccessor.AddImage(request.Category.File, cancellationToken);
+            var uploadResult = await _imageAccessor.AddImageAsync(request.Category.File, cancellationToken);
 
             if (uploadResult == null) return Result<Unit>.Failure("Failed to upload image");
 

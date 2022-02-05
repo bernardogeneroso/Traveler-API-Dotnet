@@ -15,7 +15,7 @@ namespace Services.PlacesMessages;
 
 public class Create
 {
-    public class Command : IRequest<Result<CityPlaceMessageDtoCommand>>
+    public class Command : IRequest<Result<Unit>>
     {
         public Guid PlaceId { get; set; }
         public CityPlaceMessageDtoResult Message { get; set; }
@@ -29,15 +29,17 @@ public class Create
         }
     }
 
-    public class Handler : IRequestHandler<Command, Result<CityPlaceMessageDtoCommand>>
+    public class Handler : IRequestHandler<Command, Result<Unit>>
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
         private readonly IHubContext<ChatHub, IChatHub> _hubContext;
         private readonly IImageAccessor _imageAccessor;
         private readonly IOriginAccessor _originAccessor;
-        public Handler(DataContext context, IMapper mapper, IHubContext<ChatHub, IChatHub> hubContext, IImageAccessor imageAccessor, IOriginAccessor originAccessor)
+        private readonly IRedisCacheAccessor _redisCacheAccessor;
+        public Handler(DataContext context, IMapper mapper, IHubContext<ChatHub, IChatHub> hubContext, IImageAccessor imageAccessor, IOriginAccessor originAccessor, IRedisCacheAccessor redisCacheAccessor)
         {
+            _redisCacheAccessor = redisCacheAccessor;
             _originAccessor = originAccessor;
             _imageAccessor = imageAccessor;
             _mapper = mapper;
@@ -45,15 +47,15 @@ public class Create
             _context = context;
         }
 
-        public async Task<Result<CityPlaceMessageDtoCommand>> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            if (!await _context.CityPlace.AnyAsync(x => x.Id == request.PlaceId, cancellationToken)) return Result<CityPlaceMessageDtoCommand>.Failure("Failed to create message");
+            if (!await _context.CityPlace.AnyAsync(x => x.Id == request.PlaceId, cancellationToken)) return Result<Unit>.Failure("Failed to create message");
 
             var cityPlaceMessage = _mapper.Map<CityPlaceMessage>(request.Message);
 
-            var uploadResult = await _imageAccessor.AddImage(request.Message.File, cancellationToken);
+            var uploadResult = await _imageAccessor.AddImageAsync(request.Message.File, cancellationToken);
 
-            if (uploadResult == null) return Result<CityPlaceMessageDtoCommand>.Failure("Failed to upload image");
+            if (uploadResult == null) return Result<Unit>.Failure("Failed to upload image");
 
             cityPlaceMessage.AvatarName = uploadResult.Filename;
             cityPlaceMessage.AvatarPublicId = uploadResult.PublicId;
@@ -63,7 +65,7 @@ public class Create
 
             var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 
-            if (!result) return Result<CityPlaceMessageDtoCommand>.Failure("Failed to create message");
+            if (!result) return Result<Unit>.Failure("Failed to create message");
 
             var averangeMessagesOfPlace = await _context.CityPlaceMessage
                     .AsNoTracking()
@@ -86,7 +88,7 @@ public class Create
 
             var result2 = await _context.SaveChangesAsync(cancellationToken) > 0;
 
-            if (!result2) return Result<CityPlaceMessageDtoCommand>.Failure("Failed to create message");
+            if (!result2) return Result<Unit>.Failure("Failed to create message");
 
             var cityPlaceMessageDto = _mapper.Map<CityPlaceMessageDtoQuery>(cityPlaceMessage,
                     opt => opt.AfterMap((src, dest) => dest.Avatar =
@@ -98,9 +100,11 @@ public class Create
                 PlaceRating = averageRoundMessage
             };
 
+            await _redisCacheAccessor.KeyDeleteDirectAsync($"/chat_list_{request.PlaceId}");
+
             await _hubContext.Clients.Group(request.PlaceId.ToString()).ReceiveMessage(cityPlaceMessageDtoCommand);
 
-            return Result<CityPlaceMessageDtoCommand>.Success(cityPlaceMessageDtoCommand);
+            return Result<Unit>.SuccessNoContent(Unit.Value);
         }
     }
 }

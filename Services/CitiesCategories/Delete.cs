@@ -30,7 +30,7 @@ public class Delete
 
             if (category.ImagePublicId != null)
             {
-                await _imageAccessor.DeleteImage(category.ImagePublicId);
+                await _imageAccessor.DeleteImageAsync(category.ImagePublicId);
             }
 
             _context.CategoryCity.Remove(category);

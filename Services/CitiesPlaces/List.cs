@@ -24,8 +24,10 @@ public class List
         private readonly DataContext _context;
         private readonly IMapper _mapper;
         private readonly IOriginAccessor _originAccessor;
-        public Handler(DataContext context, IMapper mapper, IOriginAccessor originAccessor)
+        private readonly IRedisCacheAccessor _redisCacheAccessor;
+        public Handler(DataContext context, IMapper mapper, IOriginAccessor originAccessor, IRedisCacheAccessor redisCacheAccessor)
         {
+            _redisCacheAccessor = redisCacheAccessor;
             _originAccessor = originAccessor;
             _mapper = mapper;
             _context = context;
@@ -33,6 +35,12 @@ public class List
 
         public async Task<Result<List<CityPlaceDtoListQuery>>> Handle(Query request, CancellationToken cancellationToken)
         {
+            string[] keyMaster = { "list", request.TopRated.ToString(), request.CategoryId.ToString() };
+
+            var cityPlaceDtoListCached = await _redisCacheAccessor.GetCacheValueAsync<List<CityPlaceDtoListQuery>>(keyMaster);
+
+            if (cityPlaceDtoListCached != null) return Result<List<CityPlaceDtoListQuery>>.Success(cityPlaceDtoListCached);
+
             var cityPlaces = _context.CityPlace
                 .AsNoTracking()
                 .Where(c => c.CityId == request.CityId)
@@ -51,11 +59,13 @@ public class List
                         .Take(4);
             }
 
-            return Result<List<CityPlaceDtoListQuery>>.Success(
-                await cityPlaces
+            var cityPlacesList = await cityPlaces
                     .ProjectTo<CityPlaceDtoListQuery>(_mapper.ConfigurationProvider, new { currentUrlCloudinary = _originAccessor.GetCloudinaryUrl() })
-                    .ToListAsync(cancellationToken)
-            );
+                    .ToListAsync(cancellationToken);
+
+            await _redisCacheAccessor.SetCacheValueAsync<List<CityPlaceDtoListQuery>>(keyMaster, cityPlacesList);
+
+            return Result<List<CityPlaceDtoListQuery>>.Success(cityPlacesList);
         }
     }
 }

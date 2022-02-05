@@ -23,8 +23,10 @@ public class Details
         private readonly DataContext _context;
         private readonly IMapper _mapper;
         private readonly IOriginAccessor _originAccessor;
-        public Handler(DataContext context, IMapper mapper, IOriginAccessor originAccessor)
+        private readonly IRedisCacheAccessor _redisCacheAccessor;
+        public Handler(DataContext context, IMapper mapper, IOriginAccessor originAccessor, IRedisCacheAccessor redisCacheAccessor)
         {
+            _redisCacheAccessor = redisCacheAccessor;
             _originAccessor = originAccessor;
             _mapper = mapper;
             _context = context;
@@ -33,6 +35,12 @@ public class Details
         public async Task<Result<CityDtoGetQuery>> Handle(Query request, CancellationToken cancellationToken)
         {
             var urlCloudinary = _originAccessor.GetCloudinaryUrl();
+
+            string[] keyMaster = { "detail" };
+
+            var cityDtoDetailCached = await _redisCacheAccessor.GetCacheValueAsync<CityDtoGetQuery>(keyMaster);
+
+            if (cityDtoDetailCached != null) return Result<CityDtoGetQuery>.Success(cityDtoDetailCached);
 
             var cityDto = await _context.City
                         .Include(x => x.Detail)
@@ -58,6 +66,8 @@ public class Details
                 PlaceHighlighted = placeHighlighted,
                 Categories = categoriesDto
             };
+
+            await _redisCacheAccessor.SetCacheValueAsync(keyMaster, cityDtoDetail);
 
             return Result<CityDtoGetQuery>.Success(cityDtoDetail);
         }

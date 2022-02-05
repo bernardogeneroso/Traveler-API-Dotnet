@@ -163,12 +163,12 @@ public class AccountController : ControllerBase
 
         if (user.AvatarPublicId != null)
         {
-            var resultDeleteImage = await _imageAccessor.DeleteImage(user.AvatarPublicId);
+            var resultDeleteImageAsync = await _imageAccessor.DeleteImageAsync(user.AvatarPublicId);
 
-            if (resultDeleteImage == null) return BadRequest("Problem uploading image");
+            if (resultDeleteImageAsync == null) return BadRequest("Problem uploading image");
         }
 
-        var uploadResult = await _imageAccessor.AddImage(File, CancellationToken.None);
+        var uploadResult = await _imageAccessor.AddImageAsync(File, CancellationToken.None);
 
         if (uploadResult == null) return BadRequest("Problem uploading image");
 

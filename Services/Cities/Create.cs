@@ -47,7 +47,7 @@ public class Create
 
             var newCity = _mapper.Map(request.City, city);
 
-            var uploadResult = await _imageAccessor.AddImage(request.City.File, cancellationToken);
+            var uploadResult = await _imageAccessor.AddImageAsync(request.City.File, cancellationToken);
 
             newCity.ImageName = uploadResult.Filename;
             newCity.ImagePublicId = uploadResult.PublicId;

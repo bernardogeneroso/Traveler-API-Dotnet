@@ -22,6 +22,6 @@ public class ChatHub : Hub<IChatHub>
 
         var result = await _mediator.Send(new List.Query { PlaceId = Guid.Parse(placeId) });
 
-        await Clients.Group(placeId.ToString()).LoadMessages(result.Value);
+        if (result.IsSuccess) await Clients.Group(placeId.ToString()).LoadMessages(result.Value);
     }
 }

@@ -68,7 +68,12 @@ public class MappingProfiles : Profile
         CreateMap<CityPlaceSchedule, CityPlaceScheduleDtoQuery>();
         CreateMap<CityPlaceScheduleDtoResult, CityPlaceSchedule>();
 
-        CreateMap<CityPlaceMessage, CityPlaceMessageDtoQuery>();
+        CreateMap<CityPlaceMessage, CityPlaceMessageDtoQuery>()
+                .ForMember(dest => dest.Avatar,
+                opt => opt.MapFrom(src => src.AvatarName != null ?
+                    new AvatarDto { Name = src.AvatarName, Url = $"{currentUrlCloudinary}/{src.AvatarName}", PublicId = src.AvatarPublicId }
+                    : null
+                ));
         CreateMap<CityPlaceMessageDtoResult, CityPlaceMessage>();
     }
 }

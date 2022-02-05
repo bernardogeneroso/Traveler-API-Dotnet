@@ -22,8 +22,10 @@ public class Detail
         private readonly DataContext _context;
         private readonly IMapper _mapper;
         private readonly IOriginAccessor _originAccessor;
-        public Handler(DataContext context, IMapper mapper, IOriginAccessor originAccessor)
+        private readonly IRedisCacheAccessor _redisCacheAccessor;
+        public Handler(DataContext context, IMapper mapper, IOriginAccessor originAccessor, IRedisCacheAccessor redisCacheAccessor)
         {
+            _redisCacheAccessor = redisCacheAccessor;
             _originAccessor = originAccessor;
             _mapper = mapper;
             _context = context;
@@ -31,6 +33,12 @@ public class Detail
 
         public async Task<Result<CityPlaceDtoQuery>> Handle(Query request, CancellationToken cancellationToken)
         {
+            string[] keyMaster = { "detail" };
+
+            var cityPlaceDtoDetailCached = await _redisCacheAccessor.GetCacheValueAsync<CityPlaceDtoQuery>(keyMaster);
+
+            if (cityPlaceDtoDetailCached != null) return Result<CityPlaceDtoQuery>.Success(cityPlaceDtoDetailCached);
+
             var place = await _context.CityPlace
                     .AsNoTracking()
                     .Include(x => x.Schedules)
@@ -42,6 +50,8 @@ public class Detail
             place.Schedules = place.Schedules
                     .OrderBy(x => x.DayWeek)
                     .ToList();
+
+            await _redisCacheAccessor.SetCacheValueAsync(keyMaster, place);
 
             return Result<CityPlaceDtoQuery>.Success(place);
         }

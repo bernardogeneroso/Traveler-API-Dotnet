@@ -36,7 +36,7 @@ public class Delete
 
             if (existCityPlace.ImagePublicId != null)
             {
-                await _imageAccessor.DeleteImage(existCityPlace.ImagePublicId);
+                await _imageAccessor.DeleteImageAsync(existCityPlace.ImagePublicId);
             }
 
             _context.CityPlace.Remove(existCityPlace);

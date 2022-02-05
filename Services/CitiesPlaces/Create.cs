@@ -60,7 +60,7 @@ public class Create
 
             var cityPlace = _mapper.Map<CityPlace>(request.Place);
 
-            var uploadResult = await _imageAccessor.AddImage(request.Place.File, cancellationToken);
+            var uploadResult = await _imageAccessor.AddImageAsync(request.Place.File, cancellationToken);
 
             if (uploadResult == null) return Result<Unit>.Failure("Failed to upload image");
 

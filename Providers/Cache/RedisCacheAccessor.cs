@@ -28,6 +28,8 @@ public class RedisCacheAccessor : IRedisCacheAccessor
 
         if (serializedValue is IList list && list.Count == 0) return default;
 
+        Console.WriteLine($"Cache => {keyMaster} | Time: {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}");
+
         return JsonSerializer.Deserialize<T>(value);
     }
 
@@ -43,17 +45,19 @@ public class RedisCacheAccessor : IRedisCacheAccessor
         await db.StringSetAsync(keyMaster, serializedValue, timeSpan);
     }
 
+    public async Task KeyDeleteDirectAsync(string key)
+    {
+        var db = _connectionMultiplexer.GetDatabase();
+        await db.KeyDeleteAsync(key);
+    }
+
     private string CreateKeyMaster(string[] keys)
     {
         var keyMaster = _originAccessor.GetRoutePath();
 
         foreach (var key in keys)
         {
-            var newKey = key;
-
-            if (key == null) newKey = "_";
-
-            keyMaster += $":{newKey}";
+            keyMaster += $"_{key}";
         }
 
         return keyMaster;

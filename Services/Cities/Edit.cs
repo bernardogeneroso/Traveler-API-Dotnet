@@ -49,12 +49,12 @@ public class Edit
             {
                 if (city.ImagePublicId != null)
                 {
-                    var resultDeleteImage = await _imageAccessor.DeleteImage(city.ImagePublicId);
+                    var resultDeleteImageAsync = await _imageAccessor.DeleteImageAsync(city.ImagePublicId);
 
-                    if (resultDeleteImage == null) return Result<Unit>.Failure("Failed to delete image");
+                    if (resultDeleteImageAsync == null) return Result<Unit>.Failure("Failed to delete image");
                 }
 
-                var uploadResult = await _imageAccessor.AddImage(request.City.File, cancellationToken);
+                var uploadResult = await _imageAccessor.AddImageAsync(request.City.File, cancellationToken);
 
                 city.ImageName = uploadResult.Filename;
                 city.ImagePublicId = uploadResult.PublicId;

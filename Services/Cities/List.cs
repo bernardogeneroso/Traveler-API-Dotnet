@@ -64,12 +64,12 @@ public class List
 
             var urlCloudinary = _originAccessor.GetCloudinaryUrl();
 
+            string[] keyMaster = { request.Search, request.Filter.ToString() };
+
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
-                string[] keyMasterSearch = { request.Search, request.Filter.ToString() };
-
                 var citiesDtoSearch = await _redisCacheAccessor
-                                .GetCacheValueAsync<List<CityDtoQuery>>(keyMasterSearch);
+                                .GetCacheValueAsync<List<CityDtoQuery>>(keyMaster);
 
                 if (citiesDtoSearch == null)
                 {
@@ -88,13 +88,11 @@ public class List
 
                     if (citiesDtoSearch.All(x => !x.IsActive)) citiesDtoSearch.Clear();
 
-                    await _redisCacheAccessor.SetCacheValueAsync(keyMasterSearch, citiesDtoSearch);
+                    await _redisCacheAccessor.SetCacheValueAsync(keyMaster, citiesDtoSearch);
                 }
 
                 return Result<List<CityDtoQuery>>.Success(citiesDtoSearch);
             }
-
-            string[] keyMaster = { request.Search, request.Filter.ToString() };
 
             var citiesDto = await _redisCacheAccessor.GetCacheValueAsync<List<CityDtoQuery>>(keyMaster);
 
