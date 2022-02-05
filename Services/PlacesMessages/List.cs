@@ -33,7 +33,7 @@ public class List
             var cityPlaceMessage = await _context.CityPlaceMessage
                 .AsNoTracking()
                 .Where(x => x.PlaceId == request.PlaceId)
-                .ProjectTo<CityPlaceMessageDtoQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
+                .ProjectTo<CityPlaceMessageDtoQuery>(_mapper.ConfigurationProvider, new { currentUrlCloudinary = _originAccessor.GetCloudinaryUrl() })
                 .ToListAsync(cancellationToken);
 
             return Result<List<CityPlaceMessageDtoQuery>>.Success(cityPlaceMessage);

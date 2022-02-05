@@ -5,8 +5,8 @@ using Database;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Services.Cities.DTOs;
+using Services.Interfaces;
 
 namespace Services.Cities;
 
@@ -30,11 +30,13 @@ public class List
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
-        private readonly IConfiguration _config;
+        private readonly IOriginAccessor _originAccessor;
+        private readonly IRedisCacheAccessor _redisCacheAccessor;
 
-        public Handler(DataContext context, IMapper mapper, IConfiguration config)
+        public Handler(DataContext context, IMapper mapper, IRedisCacheAccessor redisCacheAccessor, IOriginAccessor originAccessor)
         {
-            _config = config;
+            _redisCacheAccessor = redisCacheAccessor;
+            _originAccessor = originAccessor;
             _mapper = mapper;
             _context = context;
         }
@@ -60,33 +62,52 @@ public class List
                 query = query.OrderBy(x => x.Name);
             }
 
-            var urlCloudinary = _config.GetSection("Cloudinary").GetValue<string>("Url");
+            var urlCloudinary = _originAccessor.GetCloudinaryUrl();
 
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
-                var cities = await query
+                string[] keyMasterSearch = { request.Search, request.Filter.ToString() };
+
+                var citiesDtoSearch = await _redisCacheAccessor
+                                .GetCacheValueAsync<List<CityDtoQuery>>(keyMasterSearch);
+
+                if (citiesDtoSearch == null)
+                {
+                    citiesDtoSearch = await query
                         .AsNoTracking()
                         .ProjectTo<CityDtoQuery>(_mapper.ConfigurationProvider, new { currentUrlCloudinary = urlCloudinary })
                         .ToListAsync(cancellationToken);
 
-                cities = cities.Select(x =>
-                {
-                    x.IsActive = x.Name.Contains(request.Search, StringComparison.OrdinalIgnoreCase);
-                    return x;
-                })
-                .OrderByDescending(x => x.IsActive)
-                .ToList();
+                    citiesDtoSearch = citiesDtoSearch.Select(x =>
+                    {
+                        x.IsActive = x.Name.Contains(request.Search, StringComparison.OrdinalIgnoreCase);
+                        return x;
+                    })
+                    .OrderByDescending(x => x.IsActive)
+                    .ToList();
 
-                if (cities.All(x => !x.IsActive)) cities.Clear();
+                    if (citiesDtoSearch.All(x => !x.IsActive)) citiesDtoSearch.Clear();
 
-                return Result<List<CityDtoQuery>>.Success(cities);
+                    await _redisCacheAccessor.SetCacheValueAsync(keyMasterSearch, citiesDtoSearch);
+                }
+
+                return Result<List<CityDtoQuery>>.Success(citiesDtoSearch);
             }
 
-            return Result<List<CityDtoQuery>>.Success(
-                await query
-                .ProjectTo<CityDtoQuery>(_mapper.ConfigurationProvider, new { currentUrlCloudinary = urlCloudinary })
-                .ToListAsync(cancellationToken)
-            );
+            string[] keyMaster = { request.Search, request.Filter.ToString() };
+
+            var citiesDto = await _redisCacheAccessor.GetCacheValueAsync<List<CityDtoQuery>>(keyMaster);
+
+            if (citiesDto == null)
+            {
+                citiesDto = await query
+                    .ProjectTo<CityDtoQuery>(_mapper.ConfigurationProvider, new { currentUrlCloudinary = urlCloudinary })
+                    .ToListAsync(cancellationToken);
+
+                await _redisCacheAccessor.SetCacheValueAsync(keyMaster, citiesDto);
+            }
+
+            return Result<List<CityDtoQuery>>.Success(citiesDto);
         }
     }
 }

@@ -53,7 +53,7 @@ public class List
 
             return Result<List<CityPlaceDtoListQuery>>.Success(
                 await cityPlaces
-                    .ProjectTo<CityPlaceDtoListQuery>(_mapper.ConfigurationProvider, new { currentOrigin = _originAccessor.GetOrigin() })
+                    .ProjectTo<CityPlaceDtoListQuery>(_mapper.ConfigurationProvider, new { currentUrlCloudinary = _originAccessor.GetCloudinaryUrl() })
                     .ToListAsync(cancellationToken)
             );
         }

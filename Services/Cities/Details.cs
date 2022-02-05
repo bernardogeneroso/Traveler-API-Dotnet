@@ -4,10 +4,10 @@ using AutoMapper.QueryableExtensions;
 using Database;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Services.Cities.DTOs;
 using Services.CitiesCategories.DTOs;
 using Services.CitiesPlaces.DTOs;
+using Services.Interfaces;
 
 namespace Services.Cities;
 
@@ -22,17 +22,17 @@ public class Details
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
-        private readonly IConfiguration _config;
-        public Handler(DataContext context, IMapper mapper, IConfiguration config)
+        private readonly IOriginAccessor _originAccessor;
+        public Handler(DataContext context, IMapper mapper, IOriginAccessor originAccessor)
         {
-            _config = config;
+            _originAccessor = originAccessor;
             _mapper = mapper;
             _context = context;
         }
 
         public async Task<Result<CityDtoGetQuery>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var urlCloudinary = _config.GetSection("Cloudinary").GetValue<string>("Url");
+            var urlCloudinary = _originAccessor.GetCloudinaryUrl();
 
             var cityDto = await _context.City
                         .Include(x => x.Detail)

@@ -3,10 +3,12 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Providers.API;
+using Providers.Cache;
 using Providers.Image;
 using Providers.Mail;
 using Providers.Security;
 using Services.Interfaces;
+using StackExchange.Redis;
 
 namespace API.Extensions;
 
@@ -75,12 +77,16 @@ public static class ApplicationServiceExtensions
                 config["Mail:Password"]
             );
 
+        services.AddSingleton<IConnectionMultiplexer>(x =>
+                ConnectionMultiplexer.Connect(config.GetValue<string>("RedisConnection")));
+
         services.AddMediatR(typeof(Services.Cities.List.Handler).Assembly);
         services.AddAutoMapper(typeof(Services.Core.MappingProfiles).Assembly);
         services.AddScoped<IUserAccessor, UserAccessor>();
         services.AddScoped<IImageAccessor, ImageAccessor>();
         services.AddScoped<IOriginAccessor, OriginAccessor>();
         services.AddScoped<IMailAccessor, MailAccessor>();
+        services.AddScoped<IRedisCacheAccessor, RedisCacheAccessor>();
         services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
         services.AddSignalR();
 

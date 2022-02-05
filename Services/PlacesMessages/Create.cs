@@ -5,7 +5,6 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Models;
 using Models.Helpers;
 using Services.Interfaces;
@@ -36,10 +35,10 @@ public class Create
         private readonly IMapper _mapper;
         private readonly IHubContext<ChatHub, IChatHub> _hubContext;
         private readonly IImageAccessor _imageAccessor;
-        private readonly IConfiguration _config;
-        public Handler(DataContext context, IMapper mapper, IHubContext<ChatHub, IChatHub> hubContext, IImageAccessor imageAccessor, IConfiguration config)
+        private readonly IOriginAccessor _originAccessor;
+        public Handler(DataContext context, IMapper mapper, IHubContext<ChatHub, IChatHub> hubContext, IImageAccessor imageAccessor, IOriginAccessor originAccessor)
         {
-            _config = config;
+            _originAccessor = originAccessor;
             _imageAccessor = imageAccessor;
             _mapper = mapper;
             _hubContext = hubContext;
@@ -89,11 +88,9 @@ public class Create
 
             if (!result2) return Result<CityPlaceMessageDtoCommand>.Failure("Failed to create message");
 
-            var urlCloudinary = _config.GetSection("Cloudinary").GetValue<string>("Url");
-
             var cityPlaceMessageDto = _mapper.Map<CityPlaceMessageDtoQuery>(cityPlaceMessage,
                     opt => opt.AfterMap((src, dest) => dest.Avatar =
-                    new AvatarDto { Name = cityPlaceMessage.AvatarName, Url = $"{urlCloudinary}/{cityPlaceMessage.AvatarPublicId}" }));
+                    new AvatarDto { Name = cityPlaceMessage.AvatarName, Url = $"{_originAccessor.GetCloudinaryUrl()}/{cityPlaceMessage.AvatarPublicId}" }));
 
             var cityPlaceMessageDtoCommand = new CityPlaceMessageDtoCommand
             {
