@@ -15,10 +15,10 @@ public class MailAccessor : IMailAccessor
 
     public async Task SendMail(string to, string subject, string displayName, MailButton mailButton, string body = null)
     {
-        body = body ?? "Test email of RentX";
+        body += body ?? "Test email of RentX";
 
-        mailButton.Link = mailButton.Link ?? $"{_originAccessor.GetOrigin()}";
-        mailButton.Text = mailButton.Text ?? $"Go to RentX";
+        mailButton.Link += mailButton.Link ?? $"{_originAccessor.GetOrigin()}";
+        mailButton.Text += mailButton.Text ?? $"Go to RentX";
 
         var path = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "test.cshtml");
 

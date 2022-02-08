@@ -35,7 +35,7 @@ public class List
 
         public async Task<Result<List<CityPlaceDtoListQuery>>> Handle(Query request, CancellationToken cancellationToken)
         {
-            string[] keyMaster = { "list", request.TopRated.ToString(), request.CategoryId.ToString() };
+            var keyMaster = new string[] { "list", request.TopRated.ToString(), request.CategoryId.ToString() };
 
             var cityPlaceDtoListCached = await _redisCacheAccessor.GetCacheValueAsync<List<CityPlaceDtoListQuery>>(keyMaster);
 
@@ -63,7 +63,7 @@ public class List
                     .ProjectTo<CityPlaceDtoListQuery>(_mapper.ConfigurationProvider, new { currentUrlCloudinary = _originAccessor.GetCloudinaryUrl() })
                     .ToListAsync(cancellationToken);
 
-            await _redisCacheAccessor.SetCacheValueAsync<List<CityPlaceDtoListQuery>>(keyMaster, cityPlacesList);
+            await _redisCacheAccessor.SetCacheValueAsync(cityPlacesList, keyMaster);
 
             return Result<List<CityPlaceDtoListQuery>>.Success(cityPlacesList);
         }

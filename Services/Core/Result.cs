@@ -6,7 +6,7 @@ public class Result<T>
 {
     public bool IsSuccess { get; set; }
     public bool IsSuccessNoContent { get; set; }
-    public T Value { get; set; } = default(T)!;
+    public T Value { get; set; }
     public string Error { get; set; } = string.Empty;
     public ValidationResult FluentValidationError { get; set; } = null;
 

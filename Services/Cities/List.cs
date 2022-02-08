@@ -64,7 +64,7 @@ public class List
 
             var urlCloudinary = _originAccessor.GetCloudinaryUrl();
 
-            string[] keyMaster = { request.Search, request.Filter.ToString() };
+            var keyMaster = new string[] { request.Search, request.Filter.ToString() };
 
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
@@ -88,7 +88,7 @@ public class List
 
                     if (citiesDtoSearch.All(x => !x.IsActive)) citiesDtoSearch.Clear();
 
-                    await _redisCacheAccessor.SetCacheValueAsync(keyMaster, citiesDtoSearch);
+                    await _redisCacheAccessor.SetCacheValueAsync(citiesDtoSearch, keyMaster);
                 }
 
                 return Result<List<CityDtoQuery>>.Success(citiesDtoSearch);
@@ -102,7 +102,7 @@ public class List
                     .ProjectTo<CityDtoQuery>(_mapper.ConfigurationProvider, new { currentUrlCloudinary = urlCloudinary })
                     .ToListAsync(cancellationToken);
 
-                await _redisCacheAccessor.SetCacheValueAsync(keyMaster, citiesDto);
+                await _redisCacheAccessor.SetCacheValueAsync(citiesDto, keyMaster);
             }
 
             return Result<List<CityDtoQuery>>.Success(citiesDto);

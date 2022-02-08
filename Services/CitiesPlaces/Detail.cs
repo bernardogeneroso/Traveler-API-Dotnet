@@ -33,7 +33,7 @@ public class Detail
 
         public async Task<Result<CityPlaceDtoQuery>> Handle(Query request, CancellationToken cancellationToken)
         {
-            string[] keyMaster = { "detail" };
+            var keyMaster = new string[] { "detail" };
 
             var cityPlaceDtoDetailCached = await _redisCacheAccessor.GetCacheValueAsync<CityPlaceDtoQuery>(keyMaster);
 
@@ -51,7 +51,7 @@ public class Detail
                     .OrderBy(x => x.DayWeek)
                     .ToList();
 
-            await _redisCacheAccessor.SetCacheValueAsync(keyMaster, place);
+            await _redisCacheAccessor.SetCacheValueAsync(place, keyMaster);
 
             return Result<CityPlaceDtoQuery>.Success(place);
         }

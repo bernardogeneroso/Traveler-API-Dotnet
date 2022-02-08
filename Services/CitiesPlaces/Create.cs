@@ -41,7 +41,7 @@ public class Create
 
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var category = await _context.CategoryCity.FindAsync(request.CategoryId);
+            var category = await _context.CategoryCity.FindAsync(new object[] { request.CategoryId }, cancellationToken);
 
             if (category == null) return Result<Unit>.Failure("Category does not exist");
 

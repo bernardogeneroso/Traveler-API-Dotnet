@@ -37,9 +37,9 @@ public class Create
 
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var cityExist = await _context.CityPlace.AsNoTracking().AnyAsync(x => x.Id == request.PlaceId);
-            var scheduleCount = await _context.CityPlaceSchedule.AsNoTracking().CountAsync(x => x.PlaceId == request.PlaceId);
-            var scheduleUnavailable = await _context.CityPlaceSchedule.AsNoTracking().AnyAsync(x => x.PlaceId == request.PlaceId && x.DayWeek == request.Schedule.DayWeek);
+            var cityExist = await _context.CityPlace.AsNoTracking().AnyAsync(x => x.Id == request.PlaceId, cancellationToken);
+            var scheduleCount = await _context.CityPlaceSchedule.AsNoTracking().CountAsync(x => x.PlaceId == request.PlaceId, cancellationToken);
+            var scheduleUnavailable = await _context.CityPlaceSchedule.AsNoTracking().AnyAsync(x => x.PlaceId == request.PlaceId && x.DayWeek == request.Schedule.DayWeek, cancellationToken);
 
             if (!cityExist)
                 return Result<Unit>.Failure("City place not found");

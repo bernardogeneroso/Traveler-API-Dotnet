@@ -9,8 +9,7 @@ namespace API.Controllers;
 [Route("api/[controller]")]
 public class BaseApiController : ControllerBase
 {
-    private IMediator _mediator { get; set; } = default!;
-    protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>() ?? throw new System.Exception("Mediator not found");
+    protected IMediator Mediator => HttpContext.RequestServices.GetService<IMediator>() ?? throw new Exception("Mediator not found");
 
     protected ActionResult HandleResult<T>(Result<T> result)
     {

@@ -36,7 +36,7 @@ public class Details
         {
             var urlCloudinary = _originAccessor.GetCloudinaryUrl();
 
-            string[] keyMaster = { "detail" };
+            var keyMaster = new string[] { "detail" };
 
             var cityDtoDetailCached = await _redisCacheAccessor.GetCacheValueAsync<CityDtoGetQuery>(keyMaster);
 
@@ -67,7 +67,7 @@ public class Details
                 Categories = categoriesDto
             };
 
-            await _redisCacheAccessor.SetCacheValueAsync(keyMaster, cityDtoDetail);
+            await _redisCacheAccessor.SetCacheValueAsync(cityDtoDetail, keyMaster);
 
             return Result<CityDtoGetQuery>.Success(cityDtoDetail);
         }

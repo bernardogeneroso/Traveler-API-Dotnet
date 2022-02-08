@@ -24,7 +24,7 @@ public class Delete
 
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var category = await _context.CategoryCity.FindAsync(request.Id);
+            var category = await _context.CategoryCity.FindAsync(new object[] { request.Id }, cancellationToken);
 
             if (category == null) return Result<Unit>.Failure("Category not found");
 

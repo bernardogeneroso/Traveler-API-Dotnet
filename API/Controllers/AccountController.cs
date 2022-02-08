@@ -50,9 +50,7 @@ public class AccountController : ControllerBase
 
         await SetRefreshToken(user);
 
-        var origin = Request.Headers["Origin"];
-
-        var userDto = CreateUserObject(user, origin);
+        var userDto = CreateUserObject(user);
 
         if (userDto == null) return Unauthorized();
 
@@ -189,9 +187,7 @@ public class AccountController : ControllerBase
 
         await SetRefreshToken(user);
 
-        var origin = Request.Headers["Origin"];
-
-        var userDto = CreateUserObject(user, origin);
+        var userDto = CreateUserObject(user);
 
         if (userDto == null) return Unauthorized();
 
@@ -213,9 +209,7 @@ public class AccountController : ControllerBase
 
         if (oldToken != null && !oldToken.IsActive) return Unauthorized();
 
-        var origin = Request.Headers["Origin"];
-
-        var userDto = CreateUserObject(user, origin);
+        var userDto = CreateUserObject(user);
 
         if (userDto == null) return Unauthorized();
 
@@ -238,7 +232,7 @@ public class AccountController : ControllerBase
         Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
     }
 
-    private UserDto CreateUserObject(AppUser user, string origin)
+    private UserDto CreateUserObject(AppUser user)
     {
         var pathImage = user.AvatarName != null ? $"{_originAccessor.GetCloudinaryUrl()}/{user.AvatarPublicId}" : null;
 

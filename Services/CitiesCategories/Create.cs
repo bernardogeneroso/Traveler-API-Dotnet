@@ -44,7 +44,7 @@ public class Create
                     .Select(x => x.Name)
                     .ToListAsync(cancellationToken);
 
-            if (categories.Count() == 3) return Result<Unit>.Failure("Cannot add more than 3 categories");
+            if (categories.Count == 3) return Result<Unit>.Failure("Cannot add more than 3 categories");
 
             var existCategory = categories.Any(name => name == request.Category.Name);
 

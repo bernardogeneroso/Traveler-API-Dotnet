@@ -24,11 +24,11 @@ public class Delete
 
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var existCityPlace = await _context.CityPlace.FindAsync(request.Id);
+            var existCityPlace = await _context.CityPlace.FindAsync(new object[] { request.Id }, cancellationToken);
 
             if (existCityPlace == null) return Result<Unit>.Failure("Failed to delete the place");
 
-            var category = await _context.CategoryCity.FindAsync(existCityPlace.CategoryId);
+            var category = await _context.CategoryCity.FindAsync(new object[] { existCityPlace.CategoryId }, cancellationToken);
 
             if (category == null) return Result<Unit>.Failure("Failed to delete the place");
 
